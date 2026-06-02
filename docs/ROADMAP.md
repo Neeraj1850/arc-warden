@@ -1,0 +1,31 @@
+# Roadmap
+
+## Phase 1: Local MVP
+
+- deterministic analyzer
+- HTTP API
+- MCP tool wrapper
+- report hash generation
+- core analyzer tests
+
+## Phase 2: Grant Demo
+
+- x402 payment gate on testnet
+- Arc Testnet report registry deployment
+- demo transaction scenarios
+- CLI or minimal web demo
+
+## Phase 3: Security Depth
+
+- Anvil fork simulation
+- ABI registry
+- Permit and Permit2 detection
+- multicall analysis
+- slippage and MEV risk scoring
+
+## Phase 4: Agentic Economy
+
+- ERC-8004 agent identity
+- ERC-8183 security-review jobs
+- reputation signals
+- policy registry governance

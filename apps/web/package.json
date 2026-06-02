@@ -1,0 +1,13 @@
+{
+  "name": "@arc-warden/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"web placeholder: no build yet\"",
+    "dev": "echo \"web placeholder: UI not implemented yet\"",
+    "lint": "echo \"web placeholder: no lint yet\"",
+    "test": "echo \"web placeholder: no tests yet\"",
+    "typecheck": "echo \"web placeholder: no typecheck yet\""
+  }
+}
