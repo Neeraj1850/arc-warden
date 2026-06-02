@@ -44,7 +44,26 @@ Future integration will add the official MCP SDK transport and expose the tool o
 
 ## x402 Integration Plan
 
-The `packages/x402` package contains placeholders for payment verification and client helpers. The first grant demo should:
+The API now supports an x402-protected `/analyze` path through Express middleware.
+
+Local mock mode:
+
+```bash
+X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+```
+
+Real Base Sepolia mode:
+
+```bash
+X402_ENABLED=true \
+X402_MODE=real \
+X402_PAY_TO=0xYourReceivingWallet \
+X402_PRICE=$0.001 \
+X402_NETWORK=eip155:84532 \
+pnpm --filter @arc-warden/api dev
+```
+
+The first grant demo should:
 
 - protect analysis requests with x402
 - require a max payment cap

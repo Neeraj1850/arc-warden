@@ -2,8 +2,10 @@ import { getEnv } from "./config/env.js";
 import { createApiServer } from "./server.js";
 
 const env = getEnv();
-const server = createApiServer();
+const server = await createApiServer(env);
 
 server.listen(env.port, () => {
-  console.log(`ArcWarden API listening on http://localhost:${env.port}`);
+  console.log(
+    `[api] ArcWarden API listening on http://localhost:${env.port} x402=${env.x402Enabled ? env.x402Mode : "off"}`
+  );
 });

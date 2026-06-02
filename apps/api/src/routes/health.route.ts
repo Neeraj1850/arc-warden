@@ -1,9 +1,14 @@
-import type { ServerResponse } from "node:http";
-import { sendJson } from "../server.js";
+import { Router } from "express";
 
-export function handleHealth(response: ServerResponse): void {
-  sendJson(response, 200, {
-    status: "ok",
-    service: "arc-warden-api"
+export function createHealthRouter(): Router {
+  const router = Router();
+
+  router.get("/health", (_request, response) => {
+    response.json({
+      status: "ok",
+      service: "arc-warden-api"
+    });
   });
+
+  return router;
 }

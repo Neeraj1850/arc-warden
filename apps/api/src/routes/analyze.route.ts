@@ -1,16 +1,31 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import type { AnalysisRequest } from "@arc-warden/core";
-import { requireX402Payment } from "../middleware/x402.middleware.js";
+import { Router } from "express";
+import type { AnalysisRequest, SecurityReport } from "@arc-warden/core";
 import { analyzeRequest } from "../services/analysis.service.js";
-import { readJsonBody, sendJson } from "../server.js";
+import { jsonStringify, responseLocals } from "../server.js";
 
-export async function handleAnalyze(
-  request: IncomingMessage,
-  response: ServerResponse
-): Promise<void> {
-  await requireX402Payment(request);
-  const body = await readJsonBody<AnalysisRequest>(request);
-  const report = analyzeRequest(body);
+export function createAnalyzeRouter(): Router {
+  const router = Router();
 
-  sendJson(response, 200, report);
+  router.post("/analyze", (request, response, next) => {
+    try {
+      const body = request.body as AnalysisRequest;
+      const report = analyzeRequest(body);
+      logReport(responseLocals(request).requestId, report);
+
+      response
+        .status(200)
+        .type("application/json")
+        .send(jsonStringify(report));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  return router;
+}
+
+function logReport(requestId: string, report: SecurityReport): void {
+  console.log(
+    `[api] analysis ${requestId} verdict=${report.verdict} risk=${report.riskScore} hash=${report.reportHash}`
+  );
 }

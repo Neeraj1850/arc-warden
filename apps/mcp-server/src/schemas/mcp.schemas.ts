@@ -1,38 +1,33 @@
+import { z } from "zod";
+
+const addressSchema = z
+  .string()
+  .regex(/^0x[a-fA-F0-9]{40}$/, "Expected an EVM address");
+const hexSchema = z
+  .string()
+  .regex(/^0x([a-fA-F0-9]{2})*$/, "Expected 0x-prefixed hex data");
+const decimalSchema = z.string().regex(/^\d+$/, "Expected a decimal integer");
+
 export const analyzeTransactionInputSchema = {
-  type: "object",
-  required: ["intent", "transaction"],
-  additionalProperties: false,
-  properties: {
-    requestId: { type: "string" },
-    intent: {
-      type: "object",
-      required: ["action", "chainId", "from"],
-      additionalProperties: true,
-      properties: {
-        intentId: { type: "string" },
-        action: { enum: ["transfer", "approve", "contract_call"] },
-        chainId: { type: "number" },
-        from: { type: "string" },
-        tokenAddress: { type: "string" },
-        recipient: { type: "string" },
-        spender: { type: "string" },
-        amount: { type: "string" },
-        maxAmount: { type: "string" },
-        allowUnlimitedApproval: { type: "boolean" },
-        description: { type: "string" }
-      }
-    },
-    transaction: {
-      type: "object",
-      required: ["chainId", "from", "to", "data"],
-      additionalProperties: true,
-      properties: {
-        chainId: { type: "number" },
-        from: { type: "string" },
-        to: { type: "string" },
-        value: { type: "string" },
-        data: { type: "string" }
-      }
-    }
-  }
-} as const;
+  requestId: z.string().optional(),
+  intent: z.object({
+    intentId: z.string().optional(),
+    action: z.enum(["transfer", "approve", "contract_call"]),
+    chainId: z.number().int().positive(),
+    from: addressSchema,
+    tokenAddress: addressSchema.optional(),
+    recipient: addressSchema.optional(),
+    spender: addressSchema.optional(),
+    amount: decimalSchema.optional(),
+    maxAmount: decimalSchema.optional(),
+    allowUnlimitedApproval: z.boolean().optional(),
+    description: z.string().optional()
+  }),
+  transaction: z.object({
+    chainId: z.number().int().positive(),
+    from: addressSchema,
+    to: addressSchema,
+    value: decimalSchema.optional(),
+    data: hexSchema
+  })
+};

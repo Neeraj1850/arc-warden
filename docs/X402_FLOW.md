@@ -12,4 +12,21 @@
 
 ## MVP Status
 
-The repository has a no-op verifier and API middleware placeholder. No real x402 payment verification is connected yet.
+The API has two x402 modes:
+
+- `X402_ENABLED=false`: payments disabled for local analyzer testing.
+- `X402_ENABLED=true` and `X402_MODE=mock`: `POST /analyze` requires `x-arcwarden-mock-payment: paid`, logs the payment gate, and does not touch testnet funds.
+- `X402_ENABLED=true` and `X402_MODE=real`: `POST /analyze` uses the official x402 Express middleware, EVM exact-payment scheme, and configured facilitator.
+
+## Real Testnet Config
+
+```bash
+X402_ENABLED=true
+X402_MODE=real
+X402_PAY_TO=0xYourReceivingWallet
+X402_PRICE=$0.001
+X402_NETWORK=eip155:84532
+X402_FACILITATOR_URL=https://x402.org/facilitator
+```
+
+The next mock-agent step should first use `X402_MODE=mock` so the logs prove the flow before paying Base Sepolia USDC.
