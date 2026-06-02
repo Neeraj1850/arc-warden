@@ -1,13 +1,18 @@
-import type { RequestHandler } from "express";
+import type { Express, RequestHandler } from "express";
 import type { ApiEnv } from "../config/env.js";
 
-export async function createX402Middleware(env: ApiEnv): Promise<RequestHandler> {
+export async function installX402Middleware(
+  app: Express,
+  env: ApiEnv
+): Promise<void> {
   if (!env.x402Enabled) {
-    return (_request, _response, next) => next();
+    return;
   }
 
   if (env.x402Mode === "mock") {
-    return mockX402Middleware;
+    app.use(mockX402Middleware);
+    console.log("[x402] mock middleware enabled route=\"POST /analyze\"");
+    return;
   }
 
   if (!env.x402PayTo) {
@@ -33,7 +38,8 @@ export async function createX402Middleware(env: ApiEnv): Promise<RequestHandler>
     `[x402] real middleware enabled route="POST /analyze" price=${env.x402Price} network=${env.x402Network}`
   );
 
-  return paymentMiddleware(
+  paymentMiddleware(
+    app,
     {
       "POST /analyze": {
         accepts: [
@@ -49,7 +55,7 @@ export async function createX402Middleware(env: ApiEnv): Promise<RequestHandler>
       }
     },
     resourceServer
-  ) as RequestHandler;
+  );
 }
 
 const mockX402Middleware: RequestHandler = (request, response, next) => {

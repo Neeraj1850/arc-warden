@@ -36,6 +36,30 @@ pnpm dev
 
 The current MVP does not require paid APIs or external services.
 
+## Mock Agent Flow
+
+The mock agent simulates an AI agent with a wallet address preparing an unsigned Ethereum Sepolia transaction.
+
+Start ArcWarden with mock x402 enabled:
+
+```bash
+X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+```
+
+Run a safe transfer request:
+
+```bash
+pnpm --filter @arc-warden/mock-agent safe
+```
+
+Run a malicious unlimited approval request:
+
+```bash
+pnpm --filter @arc-warden/mock-agent malicious
+```
+
+This uses Ethereum Sepolia for the transaction being analyzed and a local mock x402 payment header for the API gate. Real public x402 testnet payments should use Base Sepolia `eip155:84532`.
+
 ## MCP Tool
 
 The MCP server package contains an `analyze_transaction` tool wrapper around the core analyzer. The first implementation is kept SDK-light so the deterministic core can be tested locally before wiring a full MCP transport.

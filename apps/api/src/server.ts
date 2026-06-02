@@ -4,7 +4,7 @@ import type { ApiEnv } from "./config/env.js";
 import { createAnalyzeRouter } from "./routes/analyze.route.js";
 import { createHealthRouter } from "./routes/health.route.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
-import { createX402Middleware } from "./middleware/x402.middleware.js";
+import { installX402Middleware } from "./middleware/x402.middleware.js";
 
 export async function createApiServer(env: ApiEnv) {
   const app = express();
@@ -13,7 +13,7 @@ export async function createApiServer(env: ApiEnv) {
   app.use(express.json({ limit: "256kb" }));
   app.use(noStoreMiddleware);
   app.use(requestLogMiddleware);
-  app.use(await createX402Middleware(env));
+  await installX402Middleware(app, env);
   app.use(createHealthRouter());
   app.use(createAnalyzeRouter());
   app.use(errorMiddleware);

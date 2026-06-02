@@ -29,4 +29,10 @@ X402_NETWORK=eip155:84532
 X402_FACILITATOR_URL=https://x402.org/facilitator
 ```
 
-The next mock-agent step should first use `X402_MODE=mock` so the logs prove the flow before paying Base Sepolia USDC.
+The mock-agent flow uses an Ethereum Sepolia transaction under review and `X402_MODE=mock` so logs prove the flow before paying Base Sepolia USDC.
+
+```bash
+X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+pnpm --filter @arc-warden/mock-agent safe
+pnpm --filter @arc-warden/mock-agent malicious
+```
