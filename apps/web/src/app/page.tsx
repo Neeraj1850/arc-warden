@@ -1,7 +1,7 @@
-export default function Page() {
+﻿export default function Page() {
   return (
     <main>
-      <h1>ArcWarden</h1>
+      <h1>AgentWarden</h1>
       <p>AI-agent transaction security layer placeholder.</p>
     </main>
   );

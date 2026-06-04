@@ -1,16 +1,19 @@
 {
-  "name": "@agent-warden/mock-agent",
+  "name": "@agent-warden/attack-payloads",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "safe": "tsx src/index.ts safe-transfer",
-    "malicious": "tsx src/index.ts malicious-approval",
+    "local": "tsx src/run-payloads.ts --local",
+    "api": "tsx src/run-payloads.ts --api",
+    "dev": "tsx src/run-payloads.ts --local",
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx src/index.ts --dry-run",
+    "test": "tsx src/run-payloads.ts --local",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@agent-warden/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

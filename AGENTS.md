@@ -1,6 +1,6 @@
-# ArcWarden Project Instructions
+﻿# AgentWarden Project Instructions
 
-ArcWarden is an AI-agent transaction security layer for blockchain agents. It must stay modular, deterministic, and grant-ready while leaving room for Arc, x402, MCP, ERC-8004, and ERC-8183 integrations.
+AgentWarden is an AI-agent transaction security layer for blockchain agents. It must stay modular, deterministic, and grant-ready while leaving room for Arc, x402, MCP, ERC-8004, and ERC-8183 integrations.
 
 ## Engineering Principles
 

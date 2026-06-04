@@ -1,4 +1,4 @@
-lockfileVersion: '9.0'
+﻿lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -23,7 +23,7 @@ importers:
 
   apps/api:
     dependencies:
-      '@arc-warden/core':
+      '@agent-warden/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@x402/core':
@@ -54,7 +54,7 @@ importers:
 
   apps/mcp-server:
     dependencies:
-      '@arc-warden/core':
+      '@agent-warden/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@modelcontextprotocol/sdk':
@@ -75,6 +75,22 @@ importers:
         version: 5.9.3
 
   apps/web: {}
+
+  examples/attack-payloads:
+    dependencies:
+      '@agent-warden/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.19
+      tsx:
+        specifier: ^4.19.0
+        version: 4.22.4
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
   examples/mock-agent:
     devDependencies:

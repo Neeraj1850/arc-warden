@@ -1,7 +1,7 @@
-import {
+﻿import {
   analyzeTransactionWithSimulation,
   type AnalysisRequest
-} from "@arc-warden/core";
+} from "@agent-warden/core";
 import { analyzeTransactionInputSchema } from "../schemas/mcp.schemas.js";
 
 export const analyzeTransactionToolName = "analyze_transaction";

@@ -1,4 +1,4 @@
-# System Design
+﻿# System Design
 
 ## Goal
 
@@ -32,7 +32,7 @@ The deterministic policy engine decides the final verdict. LLMs may be added as 
 
 ## V1 Analyzer Coverage
 
-ArcWarden V1 analyzes the agent-common EVM transaction surface:
+AgentWarden V1 analyzes the agent-common EVM transaction surface:
 
 - native transfers
 - contract deployments

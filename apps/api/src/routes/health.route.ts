@@ -1,4 +1,4 @@
-import { Router } from "express";
+﻿import { Router } from "express";
 
 export function createHealthRouter(): Router {
   const router = Router();
@@ -6,7 +6,7 @@ export function createHealthRouter(): Router {
   router.get("/health", (_request, response) => {
     response.json({
       status: "ok",
-      service: "arc-warden-api"
+      service: "agent-warden-api"
     });
   });
 

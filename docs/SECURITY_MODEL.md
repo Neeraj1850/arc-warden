@@ -1,6 +1,6 @@
-# Security Model
+﻿# Security Model
 
-ArcWarden assumes all external inputs are untrusted, including MCP requests, tool outputs, x402 metadata, calldata, and future simulation responses.
+AgentWarden assumes all external inputs are untrusted, including MCP requests, tool outputs, x402 metadata, calldata, and future simulation responses.
 
 ## MVP Controls
 

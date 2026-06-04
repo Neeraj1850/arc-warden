@@ -1,6 +1,6 @@
-# Architecture
+﻿# Architecture
 
-ArcWarden is split into deterministic analysis, transport wrappers, payment verification, and future onchain attestation.
+AgentWarden is split into deterministic analysis, transport wrappers, payment verification, and future onchain attestation.
 
 ```mermaid
 flowchart LR

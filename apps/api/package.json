@@ -1,5 +1,5 @@
 {
-  "name": "@arc-warden/api",
+  "name": "@agent-warden/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@arc-warden/core": "workspace:*",
+    "@agent-warden/core": "workspace:*",
     "@x402/core": "^2.14.0",
     "@x402/evm": "^2.14.0",
     "@x402/express": "^2.14.0",

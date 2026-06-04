@@ -1,5 +1,5 @@
 {
-  "name": "@arc-warden/arc",
+  "name": "@agent-warden/arc",
   "version": "0.1.0",
   "private": true,
   "type": "module",

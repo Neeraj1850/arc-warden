@@ -1,6 +1,6 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+﻿import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { AnalysisRequest } from "@arc-warden/core";
+import type { AnalysisRequest } from "@agent-warden/core";
 import {
   analyzeTransactionToolDescription,
   analyzeTransactionToolInputSchema,
@@ -10,7 +10,7 @@ import {
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
-    name: "arc-warden",
+    name: "agent-warden",
     version: "0.1.0"
   });
 
@@ -28,7 +28,7 @@ if (process.argv.includes("--describe")) {
   console.log(
     JSON.stringify(
       {
-        name: "arc-warden",
+        name: "agent-warden",
         transport: "stdio",
         tools: [
           {
@@ -46,5 +46,5 @@ if (process.argv.includes("--describe")) {
   const transport = new StdioServerTransport();
 
   await server.connect(transport);
-  console.error("[mcp] ArcWarden MCP server connected over stdio");
+  console.error("[mcp] AgentWarden MCP server connected over stdio");
 }

@@ -1,6 +1,6 @@
-# ArcWarden
+﻿# AgentWarden
 
-ArcWarden is an AI-agent transaction security layer for blockchain agents. It exposes an x402-paid MCP security agent that other agents can call before signing or broadcasting an unsigned EVM transaction.
+AgentWarden is an AI-agent transaction security layer for blockchain agents. It exposes an x402-paid MCP security agent that other agents can call before signing or broadcasting an unsigned EVM transaction.
 
 The MVP is intentionally deterministic. It receives structured intent plus unsigned transaction data, decodes common ERC-20 calldata, applies policy checks, and returns a signed-analysis style report:
 
@@ -16,7 +16,7 @@ LLMs may explain results later, but the deterministic policy engine is always th
 
 ## Transaction Analysis V1
 
-ArcWarden now focuses first on pre-sign EVM transaction analysis. The analyzer classifies transaction envelopes, decodes agent-common actions, checks intent alignment, finds risky approvals, computes static asset deltas, and can optionally run `eth_call` simulation when `ANALYSIS_RPC_URL` is configured.
+AgentWarden now focuses first on pre-sign EVM transaction analysis. The analyzer classifies transaction envelopes, decodes agent-common actions, checks intent alignment, finds risky approvals, computes static asset deltas, and can optionally run `eth_call` simulation when `ANALYSIS_RPC_URL` is configured.
 
 V1 coverage:
 
@@ -32,8 +32,8 @@ x402 remains parked and disabled by default while the analyzer core matures.
 ## How The Flow Works
 
 1. An agent prepares an unsigned EVM transaction and structured intent.
-2. The agent calls ArcWarden through the API or MCP tool.
-3. ArcWarden decodes calldata and validates the request.
+2. The agent calls AgentWarden through the API or MCP tool.
+3. AgentWarden decodes calldata and validates the request.
 4. The policy engine checks chain, sender, token, recipient or spender, amount, unknown selectors, and unlimited approvals.
 5. The analyzer returns a deterministic verdict and report hash.
 6. Future versions will require x402 payment before analysis and anchor report hashes on Arc Testnet.
@@ -55,25 +55,43 @@ The current MVP does not require paid APIs or external services.
 
 The mock agent simulates an AI agent with a wallet address preparing an unsigned Ethereum Sepolia transaction.
 
-Start ArcWarden with mock x402 enabled:
+Start AgentWarden with mock x402 enabled:
 
 ```bash
-X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+X402_ENABLED=true X402_MODE=mock pnpm --filter @agent-warden/api dev
 ```
 
 Run a safe transfer request:
 
 ```bash
-pnpm --filter @arc-warden/mock-agent safe
+pnpm --filter @agent-warden/mock-agent safe
 ```
 
 Run a malicious unlimited approval request:
 
 ```bash
-pnpm --filter @arc-warden/mock-agent malicious
+pnpm --filter @agent-warden/mock-agent malicious
 ```
 
 This uses Ethereum Sepolia for the transaction being analyzed and a local mock x402 payment header for the API gate. Real public x402 testnet payments should use Base Sepolia `eip155:84532`.
+
+## Attack Payload Suite
+
+Run the analyzer demo suite locally without the API:
+
+```bash
+pnpm --filter @agent-warden/attack-payloads local
+```
+
+Run the same suite against `POST /analyze`:
+
+```bash
+$env:X402_ENABLED="false"
+pnpm --filter @agent-warden/api dev
+pnpm --filter @agent-warden/attack-payloads api
+```
+
+The suite covers safe transfers, unlimited approvals, NFT operator approvals, suspicious multicalls, EIP-7702 authorization lists, hidden native value, unknown selectors, deployments, and swap selectors.
 
 ## MCP Tool
 
@@ -88,7 +106,7 @@ The API now supports an x402-protected `/analyze` path through Express middlewar
 Local mock mode:
 
 ```bash
-X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+X402_ENABLED=true X402_MODE=mock pnpm --filter @agent-warden/api dev
 ```
 
 Real Base Sepolia mode:
@@ -99,7 +117,7 @@ X402_MODE=real \
 X402_PAY_TO=0xYourReceivingWallet \
 X402_PRICE=$0.001 \
 X402_NETWORK=eip155:84532 \
-pnpm --filter @arc-warden/api dev
+pnpm --filter @agent-warden/api dev
 ```
 
 The first grant demo should:

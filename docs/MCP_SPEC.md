@@ -1,4 +1,4 @@
-# MCP Spec
+﻿# MCP Spec
 
 ## Tool: `analyze_transaction`
 
@@ -16,13 +16,13 @@ Accepts the same payload as `POST /analyze`.
 The MCP server now uses the official TypeScript SDK over stdio:
 
 ```bash
-pnpm --filter @arc-warden/mcp-server dev
+pnpm --filter @agent-warden/mcp-server dev
 ```
 
 You can inspect the registered tool shape with:
 
 ```bash
-pnpm --filter @arc-warden/mcp-server dev -- --describe
+pnpm --filter @agent-warden/mcp-server dev -- --describe
 ```
 
 ## x402 Split

@@ -1,5 +1,5 @@
-import { Router } from "express";
-import type { AnalysisRequest, SecurityReport } from "@arc-warden/core";
+﻿import { Router } from "express";
+import type { AnalysisRequest, SecurityReport } from "@agent-warden/core";
 import { analyzeRequest } from "../services/analysis.service.js";
 import { jsonStringify, responseLocals } from "../server.js";
 

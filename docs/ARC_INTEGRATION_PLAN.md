@@ -1,4 +1,4 @@
-# Arc Integration Plan
+﻿# Arc Integration Plan
 
 ## Arc Testnet
 
@@ -14,7 +14,7 @@ Use Arc Testnet for report anchoring and future security-review settlement.
 
 ## Future Standards
 
-- ERC-8004 for ArcWarden agent identity and reputation.
+- ERC-8004 for AgentWarden agent identity and reputation.
 - ERC-8183 for paid security-review jobs between agents.
 
 ## Grant Demo

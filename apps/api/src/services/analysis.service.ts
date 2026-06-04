@@ -1,8 +1,8 @@
-import {
+﻿import {
   analyzeTransactionWithSimulation,
   type AnalysisRequest,
   type SecurityReport
-} from "@arc-warden/core";
+} from "@agent-warden/core";
 
 export async function analyzeRequest(
   request: AnalysisRequest

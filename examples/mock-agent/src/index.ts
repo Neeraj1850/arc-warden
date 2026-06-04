@@ -1,4 +1,4 @@
-const ETHEREUM_SEPOLIA_CHAIN_ID = 11155111;
+﻿const ETHEREUM_SEPOLIA_CHAIN_ID = 11155111;
 const MAX_UINT256 = (1n << 256n) - 1n;
 
 type Scenario = "safe-transfer" | "malicious-approval";
@@ -62,7 +62,7 @@ function parseScenario(value: string | undefined): Scenario {
 
 function getConfig() {
   return {
-    apiUrl: process.env.ARCWARDEN_API_URL ?? "http://localhost:8787/analyze",
+    apiUrl: process.env.AGENTWARDEN_API_URL ?? "http://localhost:8787/analyze",
     wallet: addressEnv(
       "MOCK_AGENT_WALLET",
       "0x1111111111111111111111111111111111111111"
@@ -154,7 +154,7 @@ async function sendAnalysisRequest(
     headers: {
       "content-type": "application/json",
       "x-request-id": request.requestId,
-      "x-arcwarden-mock-payment": "paid"
+      "x-agentwarden-mock-payment": "paid"
     },
     body: JSON.stringify(request)
   });
@@ -163,7 +163,7 @@ async function sendAnalysisRequest(
   console.log(`[mock-agent] response status=${response.status}`);
 
   if (!response.ok) {
-    throw new Error(`ArcWarden rejected request: ${responseText}`);
+    throw new Error(`AgentWarden rejected request: ${responseText}`);
   }
 
   return JSON.parse(responseText) as SecurityReport;

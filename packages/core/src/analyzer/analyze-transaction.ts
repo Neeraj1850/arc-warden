@@ -1,4 +1,4 @@
-import { collectApprovalFindings } from "./approval-detector.js";
+﻿import { collectApprovalFindings } from "./approval-detector.js";
 import { decodeCalldata } from "./calldata-decoder.js";
 import { inferStaticBalanceDeltas } from "./balance-delta-analyzer.js";
 import { detectTransactionEnvelope } from "./envelope-detector.js";
@@ -116,7 +116,7 @@ async function ethCallSimulation(
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         jsonrpc: "2.0",
-        id: request.requestId ?? "arc-warden-eth-call",
+        id: request.requestId ?? "agent-warden-eth-call",
         method: "eth_call",
         params: [
           {

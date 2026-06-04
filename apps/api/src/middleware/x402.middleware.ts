@@ -1,4 +1,4 @@
-import type { Express, RequestHandler } from "express";
+﻿import type { Express, RequestHandler } from "express";
 import type { ApiEnv } from "../config/env.js";
 
 export async function installX402Middleware(
@@ -56,7 +56,7 @@ export async function installX402Middleware(
             payTo: env.x402PayTo
           }
         ],
-        description: "ArcWarden pre-transaction security analysis",
+        description: "AgentWarden pre-transaction security analysis",
         mimeType: "application/json"
       }
     },
@@ -70,15 +70,15 @@ const mockX402Middleware: RequestHandler = (request, response, next) => {
     return;
   }
 
-  const mockPayment = request.headers["x-arcwarden-mock-payment"];
+  const mockPayment = request.headers["x-agentwarden-mock-payment"];
   if (!mockPayment) {
     console.log("[x402] mock payment missing for POST /analyze");
     response.status(402).json({
       error: "Payment required",
       mode: "mock",
-      paymentHeader: "x-arcwarden-mock-payment",
+      paymentHeader: "x-agentwarden-mock-payment",
       message:
-        "Set x-arcwarden-mock-payment: paid to exercise the local flow without testnet USDC."
+        "Set x-agentwarden-mock-payment: paid to exercise the local flow without testnet USDC."
     });
     return;
   }

@@ -17,6 +17,7 @@
 - x402 payment gate on testnet
 - Arc Testnet report registry deployment
 - demo transaction scenarios
+- attack payload suite for analyzer evidence
 - CLI or minimal web demo
 
 ## Phase 3: Security Depth

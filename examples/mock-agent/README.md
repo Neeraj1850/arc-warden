@@ -1,6 +1,6 @@
-# Mock Agent
+﻿# Mock Agent
 
-This example simulates an external AI agent with a wallet address asking ArcWarden to review an unsigned Ethereum Sepolia transaction before signing or broadcasting it.
+This example simulates an external AI agent with a wallet address asking AgentWarden to review an unsigned Ethereum Sepolia transaction before signing or broadcasting it.
 
 It uses:
 
@@ -15,25 +15,25 @@ The mock payment is intentionally local-only. Real x402 testnet payment should u
 Start the API in mock payment mode:
 
 ```bash
-X402_ENABLED=true X402_MODE=mock pnpm --filter @arc-warden/api dev
+X402_ENABLED=true X402_MODE=mock pnpm --filter @agent-warden/api dev
 ```
 
 In another terminal, run the safe transfer:
 
 ```bash
-pnpm --filter @arc-warden/mock-agent safe
+pnpm --filter @agent-warden/mock-agent safe
 ```
 
 Run the malicious approval:
 
 ```bash
-pnpm --filter @arc-warden/mock-agent malicious
+pnpm --filter @agent-warden/mock-agent malicious
 ```
 
 ## Environment
 
 ```bash
-ARCWARDEN_API_URL=http://localhost:8787/analyze
+AGENTWARDEN_API_URL=http://localhost:8787/analyze
 MOCK_AGENT_WALLET=0x1111111111111111111111111111111111111111
 SEPOLIA_TOKEN_ADDRESS=0x2222222222222222222222222222222222222222
 SEPOLIA_RECIPIENT=0x3333333333333333333333333333333333333333
