@@ -8,6 +8,7 @@ Provide a security checkpoint that spend-capable AI agents call before signing o
 
 - structured intent
 - unsigned EVM transaction
+- signature request payload for typed/off-chain signing analysis
 - optional request ID
 - future x402 payment proof
 
@@ -44,5 +45,6 @@ AgentWarden V1 analyzes the agent-common EVM transaction surface:
 - common multicall selectors with static nested selector scans
 - execution graph construction for root actions and detected nested actions
 - EIP-7702 authorization-list detection
+- core-only signature analysis for EIP-712 permit, Permit2-like typed data, `personal_sign`, and blind `eth_sign`
 
 Set `ANALYSIS_RPC_URL` to enable optional free RPC `eth_call` success/failure simulation.
