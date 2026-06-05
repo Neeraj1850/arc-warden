@@ -1,6 +1,6 @@
 ﻿# AgentWarden
 
-AgentWarden is an AI-agent transaction security layer for blockchain agents. It exposes an x402-paid MCP security agent that other agents can call before signing or broadcasting an unsigned EVM transaction.
+AgentWarden is an AI-agent transaction security layer for blockchain agents. It analyzes unsigned EVM transactions before an agent signs or broadcasts them, with MCP and x402 integrations layered on top after the deterministic analyzer is solid.
 
 The MVP is intentionally deterministic. It receives structured intent plus unsigned transaction data, decodes common ERC-20 calldata, applies policy checks, and returns a signed-analysis style report:
 
@@ -8,6 +8,7 @@ The MVP is intentionally deterministic. It receives structured intent plus unsig
 - deterministic risk score
 - decoded transaction
 - policy violations
+- human-readable summary, findings, and recommended action
 - simulation result placeholder
 - safer alternative
 - report hash for future onchain attestation
@@ -92,6 +93,13 @@ pnpm --filter @agent-warden/attack-payloads api
 ```
 
 The suite covers safe transfers, unlimited approvals, NFT operator approvals, suspicious multicalls, EIP-7702 authorization lists, hidden native value, unknown selectors, deployments, and swap selectors.
+
+Each run writes reviewer-friendly artifacts:
+
+- `examples/attack-payloads/results/demo-report.md`
+- `examples/attack-payloads/results/demo-report.json`
+
+Use `--no-artifacts` if you only want console output.
 
 ## MCP Tool
 

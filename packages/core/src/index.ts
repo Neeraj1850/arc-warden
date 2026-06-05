@@ -8,6 +8,7 @@ export * from "./analyzer/envelope-detector.js";
 export * from "./analyzer/approval-detector.js";
 export * from "./analyzer/intent-matcher.js";
 export * from "./analyzer/risk-scorer.js";
+export * from "./analyzer/report-narrative.js";
 export * from "./policy/policy-engine.js";
 export * from "./simulation/simulator.interface.js";
 export * from "./registry/selector-registry.js";

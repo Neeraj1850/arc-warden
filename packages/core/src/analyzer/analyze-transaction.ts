@@ -2,6 +2,7 @@
 import { decodeCalldata } from "./calldata-decoder.js";
 import { inferStaticBalanceDeltas } from "./balance-delta-analyzer.js";
 import { detectTransactionEnvelope } from "./envelope-detector.js";
+import { buildReportNarrative } from "./report-narrative.js";
 import { evaluatePolicies } from "../policy/policy-engine.js";
 import type {
   AnalysisRequest,
@@ -63,19 +64,31 @@ function buildSecurityReport(
       ? simulationOverride.balanceDeltas
       : assetDeltas
   };
+  const approvalFindings = collectApprovalFindings(
+    request.transaction,
+    decodedTransaction
+  );
+  const actionType = decodedTransaction.actionType ?? "unknown_contract_call";
+  const narrative = buildReportNarrative({
+    verdict: policyDecision.verdict,
+    riskScore: policyDecision.riskScore,
+    actionType,
+    policyViolations: policyDecision.violations,
+    approvalFindings,
+    simulationResult,
+    saferAlternative: policyDecision.saferAlternative
+  });
 
   const reportWithoutHash = {
     requestId: request.requestId,
     verdict: policyDecision.verdict,
     riskScore: policyDecision.riskScore,
+    ...narrative,
     transactionEnvelope,
-    actionType: decodedTransaction.actionType ?? "unknown_contract_call",
+    actionType,
     decodedActions: decodedTransaction.decodedActions ?? [],
     assetDeltas,
-    approvalFindings: collectApprovalFindings(
-      request.transaction,
-      decodedTransaction
-    ),
+    approvalFindings,
     benchmarkProfile: inferBenchmarkProfile(request),
     decodedTransaction,
     policyViolations: policyDecision.violations,

@@ -1,0 +1,1213 @@
+{
+  "generatedAt": "deterministic-local-run",
+  "mode": "local",
+  "total": 10,
+  "failures": 0,
+  "results": [
+    {
+      "id": "agentkit-safe-erc20-transfer",
+      "title": "AgentKit-style safe ERC-20 transfer",
+      "source": "AgentKit",
+      "expectedVerdict": "ALLOW",
+      "passed": true,
+      "request": {
+        "requestId": "agentkit-safe-erc20-transfer",
+        "intent": {
+          "action": "token_transfer",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1000000",
+          "description": "AgentKit benchmark: transfer test USDC."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0xa9059cbb000000000000000000000000333333333333333333333333333333333333333300000000000000000000000000000000000000000000000000000000000f4240"
+        }
+      },
+      "report": {
+        "requestId": "agentkit-safe-erc20-transfer",
+        "verdict": "ALLOW",
+        "riskScore": 5,
+        "summary": "ALLOW: erc20 transfer classified as low risk.",
+        "explanation": "AgentWarden decoded the transaction as erc20 transfer and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+        "findings": [],
+        "recommendedAction": "Proceed only if the signer recognizes the recipient, asset, amount, and target contract.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "erc20_transfer",
+        "decodedActions": [
+          {
+            "actionType": "erc20_transfer",
+            "functionName": "erc20.transfer",
+            "selector": "0xa9059cbb",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc20",
+            "recipient": "0x3333333333333333333333333333333333333333",
+            "amount": "1000000",
+            "rawAmount": "1000000",
+            "warnings": []
+          }
+        ],
+        "assetDeltas": [
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x1111111111111111111111111111111111111111",
+            "delta": "-1000000"
+          },
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x3333333333333333333333333333333333333333",
+            "delta": "1000000"
+          }
+        ],
+        "approvalFindings": [],
+        "benchmarkProfile": "agentkit",
+        "decodedTransaction": {
+          "functionName": "erc20.transfer",
+          "actionType": "erc20_transfer",
+          "selector": "0xa9059cbb",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1000000",
+          "rawAmount": "1000000",
+          "warnings": [],
+          "decodedActions": [
+            {
+              "actionType": "erc20_transfer",
+              "functionName": "erc20.transfer",
+              "selector": "0xa9059cbb",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc20",
+              "recipient": "0x3333333333333333333333333333333333333333",
+              "amount": "1000000",
+              "rawAmount": "1000000",
+              "warnings": []
+            }
+          ]
+        },
+        "policyViolations": [],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": [
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x1111111111111111111111111111111111111111",
+              "delta": "-1000000"
+            },
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x3333333333333333333333333333333333333333",
+              "delta": "1000000"
+            }
+          ]
+        },
+        "reportHash": "0x92c363442c3db76db70a331a51295dbc0368cdf636945524f7f314182dff782b"
+      }
+    },
+    {
+      "id": "goat-unlimited-erc20-approval",
+      "title": "GOAT-style DeFi approval with unlimited allowance",
+      "source": "GOAT",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "goat-unlimited-erc20-approval",
+        "intent": {
+          "action": "approval",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "maxAmount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          "description": "GOAT benchmark: approve router before DeFi action."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0x095ea7b30000000000000000000000005555555555555555555555555555555555555555ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      },
+      "report": {
+        "requestId": "goat-unlimited-erc20-approval",
+        "verdict": "BLOCK",
+        "riskScore": 95,
+        "summary": "BLOCK: erc20 approval classified as critical risk.",
+        "explanation": "AgentWarden decoded the transaction as erc20 approval and found 2 issues before signing. Primary finding: Transaction grants an unlimited ERC-20 allowance.",
+        "findings": [
+          {
+            "code": "UNLIMITED_APPROVAL",
+            "title": "Unlimited Approval",
+            "severity": "critical",
+            "detail": "Transaction grants an unlimited ERC-20 allowance.",
+            "evidence": [
+              "expected=bounded approval amount",
+              "actual=115792089237316195423570985008687907853269984665640564039457584007913129639935"
+            ]
+          },
+          {
+            "code": "APPROVAL_ERC20_UNLIMITED",
+            "title": "ERC20 unlimited approval",
+            "severity": "critical",
+            "detail": "Unlimited ERC-20 allowance.",
+            "evidence": [
+              "standard=erc20",
+              "token=0x2222222222222222222222222222222222222222",
+              "spender=0x5555555555555555555555555555555555555555",
+              "amount=115792089237316195423570985008687907853269984665640564039457584007913129639935"
+            ]
+          }
+        ],
+        "recommendedAction": "Use a bounded approval for the exact intended amount or a short-lived spending allowance.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "erc20_approval",
+        "decodedActions": [
+          {
+            "actionType": "erc20_approval",
+            "functionName": "erc20.approve",
+            "selector": "0x095ea7b3",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc20",
+            "spender": "0x5555555555555555555555555555555555555555",
+            "amount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+            "rawAmount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+            "warnings": []
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [
+          {
+            "standard": "erc20",
+            "owner": "0x1111111111111111111111111111111111111111",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "spender": "0x5555555555555555555555555555555555555555",
+            "amount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+            "isUnlimited": true,
+            "risk": "critical",
+            "message": "Unlimited ERC-20 allowance."
+          }
+        ],
+        "benchmarkProfile": "goat",
+        "decodedTransaction": {
+          "functionName": "erc20.approve",
+          "actionType": "erc20_approval",
+          "selector": "0x095ea7b3",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "amount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          "rawAmount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          "warnings": [],
+          "decodedActions": [
+            {
+              "actionType": "erc20_approval",
+              "functionName": "erc20.approve",
+              "selector": "0x095ea7b3",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc20",
+              "spender": "0x5555555555555555555555555555555555555555",
+              "amount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+              "rawAmount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+              "warnings": []
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "UNLIMITED_APPROVAL",
+            "severity": "critical",
+            "message": "Transaction grants an unlimited ERC-20 allowance.",
+            "expected": "bounded approval amount",
+            "actual": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Use a bounded approval for the exact intended amount or a short-lived spending allowance.",
+        "reportHash": "0xfec8f13da14085e52688595249cad590118e5eba20913666caa70bcc3854132e"
+      }
+    },
+    {
+      "id": "eliza-erc721-set-approval-for-all",
+      "title": "Eliza-style NFT collection-wide approval",
+      "source": "Eliza",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "eliza-erc721-set-approval-for-all",
+        "intent": {
+          "action": "nft_transfer",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "description": "Eliza benchmark: NFT action attempts operator approval."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0xa22cb46500000000000000000000000055555555555555555555555555555555555555550000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      "report": {
+        "requestId": "eliza-erc721-set-approval-for-all",
+        "verdict": "BLOCK",
+        "riskScore": 95,
+        "summary": "BLOCK: erc721 operator approval classified as critical risk.",
+        "explanation": "AgentWarden decoded the transaction as erc721 operator approval and found 2 issues before signing. Primary finding: Transaction grants collection-wide operator permissions.",
+        "findings": [
+          {
+            "code": "OPERATOR_APPROVAL_FOR_ALL",
+            "title": "Operator Approval For All",
+            "severity": "critical",
+            "detail": "Transaction grants collection-wide operator permissions.",
+            "evidence": [
+              "expected=no operator approval or explicit intent allowance",
+              "actual=0x5555555555555555555555555555555555555555"
+            ]
+          },
+          {
+            "code": "APPROVAL_ERC721_OPERATOR",
+            "title": "ERC721 operator approval",
+            "severity": "critical",
+            "detail": "ERC-721 collection-wide operator approval.",
+            "evidence": [
+              "standard=erc721",
+              "token=0x2222222222222222222222222222222222222222",
+              "operator=0x5555555555555555555555555555555555555555"
+            ]
+          }
+        ],
+        "recommendedAction": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "erc721_operator_approval",
+        "decodedActions": [
+          {
+            "actionType": "erc721_operator_approval",
+            "functionName": "erc721.setApprovalForAll",
+            "selector": "0xa22cb465",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc721",
+            "operator": "0x5555555555555555555555555555555555555555",
+            "approved": true,
+            "warnings": [
+              "setApprovalForAll grants collection-wide operator permissions."
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [
+          {
+            "standard": "erc721",
+            "owner": "0x1111111111111111111111111111111111111111",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "operator": "0x5555555555555555555555555555555555555555",
+            "approved": true,
+            "isOperatorApproval": true,
+            "risk": "critical",
+            "message": "ERC-721 collection-wide operator approval."
+          }
+        ],
+        "benchmarkProfile": "eliza",
+        "decodedTransaction": {
+          "functionName": "erc721.setApprovalForAll",
+          "actionType": "erc721_operator_approval",
+          "selector": "0xa22cb465",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "operator": "0x5555555555555555555555555555555555555555",
+          "approved": true,
+          "warnings": [
+            "setApprovalForAll grants collection-wide operator permissions."
+          ],
+          "decodedActions": [
+            {
+              "actionType": "erc721_operator_approval",
+              "functionName": "erc721.setApprovalForAll",
+              "selector": "0xa22cb465",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc721",
+              "operator": "0x5555555555555555555555555555555555555555",
+              "approved": true,
+              "warnings": [
+                "setApprovalForAll grants collection-wide operator permissions."
+              ]
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "OPERATOR_APPROVAL_FOR_ALL",
+            "severity": "critical",
+            "message": "Transaction grants collection-wide operator permissions.",
+            "expected": "no operator approval or explicit intent allowance",
+            "actual": "0x5555555555555555555555555555555555555555"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
+        "reportHash": "0x5ced29b841f3a4d5501c0538d6c19e034c707a34ed42b91a5e64ec756185ca25"
+      }
+    },
+    {
+      "id": "erc1155-set-approval-for-all",
+      "title": "ERC-1155 collection-wide operator approval",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "erc1155-set-approval-for-all",
+        "intent": {
+          "action": "approval",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "description": "Generic benchmark: ERC-1155 operator approval."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0xa22cb46500000000000000000000000055555555555555555555555555555555555555550000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      "report": {
+        "requestId": "erc1155-set-approval-for-all",
+        "verdict": "BLOCK",
+        "riskScore": 95,
+        "summary": "BLOCK: erc1155 operator approval classified as critical risk.",
+        "explanation": "AgentWarden decoded the transaction as erc1155 operator approval and found 2 issues before signing. Primary finding: Transaction grants collection-wide operator permissions.",
+        "findings": [
+          {
+            "code": "OPERATOR_APPROVAL_FOR_ALL",
+            "title": "Operator Approval For All",
+            "severity": "critical",
+            "detail": "Transaction grants collection-wide operator permissions.",
+            "evidence": [
+              "expected=no operator approval or explicit intent allowance",
+              "actual=0x5555555555555555555555555555555555555555"
+            ]
+          },
+          {
+            "code": "APPROVAL_ERC1155_OPERATOR",
+            "title": "ERC1155 operator approval",
+            "severity": "critical",
+            "detail": "ERC-1155 collection-wide operator approval.",
+            "evidence": [
+              "standard=erc1155",
+              "token=0x2222222222222222222222222222222222222222",
+              "operator=0x5555555555555555555555555555555555555555"
+            ]
+          }
+        ],
+        "recommendedAction": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "erc1155_operator_approval",
+        "decodedActions": [
+          {
+            "actionType": "erc1155_operator_approval",
+            "functionName": "erc1155.setApprovalForAll",
+            "selector": "0xa22cb465",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc1155",
+            "operator": "0x5555555555555555555555555555555555555555",
+            "approved": true,
+            "warnings": [
+              "setApprovalForAll grants collection-wide operator permissions."
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [
+          {
+            "standard": "erc1155",
+            "owner": "0x1111111111111111111111111111111111111111",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "operator": "0x5555555555555555555555555555555555555555",
+            "approved": true,
+            "isOperatorApproval": true,
+            "risk": "critical",
+            "message": "ERC-1155 collection-wide operator approval."
+          }
+        ],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "erc1155.setApprovalForAll",
+          "actionType": "erc1155_operator_approval",
+          "selector": "0xa22cb465",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "operator": "0x5555555555555555555555555555555555555555",
+          "approved": true,
+          "warnings": [
+            "setApprovalForAll grants collection-wide operator permissions."
+          ],
+          "decodedActions": [
+            {
+              "actionType": "erc1155_operator_approval",
+              "functionName": "erc1155.setApprovalForAll",
+              "selector": "0xa22cb465",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc1155",
+              "operator": "0x5555555555555555555555555555555555555555",
+              "approved": true,
+              "warnings": [
+                "setApprovalForAll grants collection-wide operator permissions."
+              ]
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "OPERATOR_APPROVAL_FOR_ALL",
+            "severity": "critical",
+            "message": "Transaction grants collection-wide operator permissions.",
+            "expected": "no operator approval or explicit intent allowance",
+            "actual": "0x5555555555555555555555555555555555555555"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
+        "reportHash": "0x6cc79c17c16e9d74053d615861f455eaac0fdff300def193739e0a18261e77ee"
+      }
+    },
+    {
+      "id": "multicall-hidden-approval",
+      "title": "Multicall containing hidden approval selector",
+      "source": "GOAT",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "multicall-hidden-approval",
+        "intent": {
+          "action": "multicall",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "description": "GOAT benchmark: plugin-style multicall bundle."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x6666666666666666666666666666666666666666",
+          "value": "0",
+          "data": "0xac9650d80000000000000000000000000000000000000000000000000000000000000000095ea7b3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "report": {
+        "requestId": "multicall-hidden-approval",
+        "verdict": "BLOCK",
+        "riskScore": 100,
+        "summary": "BLOCK: multicall classified as critical risk.",
+        "explanation": "AgentWarden decoded the transaction as multicall and found 2 issues before signing. Primary finding: Multicall contains nested approval or swap selectors that require stricter review.",
+        "findings": [
+          {
+            "code": "SUSPICIOUS_MULTICALL",
+            "title": "Suspicious Multicall",
+            "severity": "critical",
+            "detail": "Multicall contains nested approval or swap selectors that require stricter review.",
+            "evidence": []
+          },
+          {
+            "code": "APPROVAL_ERC20",
+            "title": "ERC20 approval",
+            "severity": "medium",
+            "detail": "ERC-20 allowance change.",
+            "evidence": [
+              "standard=erc20",
+              "token=0x6666666666666666666666666666666666666666"
+            ]
+          }
+        ],
+        "recommendedAction": "Split the multicall into individual transactions or simulate and review every nested call before signing.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "multicall",
+        "decodedActions": [
+          {
+            "actionType": "multicall",
+            "functionName": "multicall",
+            "selector": "0xac9650d8",
+            "contractAddress": "0x6666666666666666666666666666666666666666",
+            "assetStandard": "unknown",
+            "warnings": [
+              "Nested approval selector detected inside multicall payload."
+            ]
+          },
+          {
+            "actionType": "erc20_approval",
+            "functionName": "erc20.approve",
+            "selector": "0x095ea7b3",
+            "contractAddress": "0x6666666666666666666666666666666666666666",
+            "assetStandard": "erc20",
+            "warnings": [
+              "Nested approval selector detected by static scan."
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [
+          {
+            "standard": "erc20",
+            "owner": "0x1111111111111111111111111111111111111111",
+            "tokenAddress": "0x6666666666666666666666666666666666666666",
+            "isUnlimited": false,
+            "risk": "medium",
+            "message": "ERC-20 allowance change."
+          }
+        ],
+        "benchmarkProfile": "goat",
+        "decodedTransaction": {
+          "functionName": "multicall",
+          "actionType": "multicall",
+          "selector": "0xac9650d8",
+          "contractAddress": "0x6666666666666666666666666666666666666666",
+          "decodedActions": [
+            {
+              "actionType": "multicall",
+              "functionName": "multicall",
+              "selector": "0xac9650d8",
+              "contractAddress": "0x6666666666666666666666666666666666666666",
+              "assetStandard": "unknown",
+              "warnings": [
+                "Nested approval selector detected inside multicall payload."
+              ]
+            },
+            {
+              "actionType": "erc20_approval",
+              "functionName": "erc20.approve",
+              "selector": "0x095ea7b3",
+              "contractAddress": "0x6666666666666666666666666666666666666666",
+              "assetStandard": "erc20",
+              "warnings": [
+                "Nested approval selector detected by static scan."
+              ]
+            }
+          ],
+          "warnings": [
+            "Nested approval selector detected inside multicall payload."
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "SUSPICIOUS_MULTICALL",
+            "severity": "critical",
+            "message": "Multicall contains nested approval or swap selectors that require stricter review."
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Split the multicall into individual transactions or simulate and review every nested call before signing.",
+        "reportHash": "0xf9a80489c9ce40214e784ebbb884ebb052f52dbac1566a7d13e7ba12c4b85881"
+      }
+    },
+    {
+      "id": "eip7702-authorization-list",
+      "title": "EIP-7702 authorization-list transaction",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "eip7702-authorization-list",
+        "intent": {
+          "action": "token_transfer",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1",
+          "description": "Generic benchmark: delegated EOA authorization attempt."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "type": 4,
+          "authorizationList": [
+            {
+              "address": "0x4444444444444444444444444444444444444444"
+            }
+          ],
+          "value": "0",
+          "data": "0xa9059cbb00000000000000000000000033333333333333333333333333333333333333330000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      "report": {
+        "requestId": "eip7702-authorization-list",
+        "verdict": "BLOCK",
+        "riskScore": 85,
+        "summary": "BLOCK: erc20 transfer classified as high risk.",
+        "explanation": "AgentWarden decoded the transaction as erc20 transfer and found 1 issue before signing. Primary finding: Transaction contains an EIP-7702 authorization list that may delegate EOA execution authority.",
+        "findings": [
+          {
+            "code": "EIP7702_AUTHORIZATION_PRESENT",
+            "title": "Eip7702 Authorization Present",
+            "severity": "critical",
+            "detail": "Transaction contains an EIP-7702 authorization list that may delegate EOA execution authority.",
+            "evidence": [
+              "expected=no authorization list unless explicitly allowed",
+              "actual=authorizationList"
+            ]
+          }
+        ],
+        "recommendedAction": "Do not sign EIP-7702 authorization-list transactions unless the delegate code and policy are independently verified.",
+        "transactionEnvelope": {
+          "type": "eip7702",
+          "rawType": 4,
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": true
+        },
+        "actionType": "erc20_transfer",
+        "decodedActions": [
+          {
+            "actionType": "erc20_transfer",
+            "functionName": "erc20.transfer",
+            "selector": "0xa9059cbb",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc20",
+            "recipient": "0x3333333333333333333333333333333333333333",
+            "amount": "1",
+            "rawAmount": "1",
+            "warnings": []
+          }
+        ],
+        "assetDeltas": [
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x1111111111111111111111111111111111111111",
+            "delta": "-1"
+          },
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x3333333333333333333333333333333333333333",
+            "delta": "1"
+          }
+        ],
+        "approvalFindings": [],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "erc20.transfer",
+          "actionType": "erc20_transfer",
+          "selector": "0xa9059cbb",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1",
+          "rawAmount": "1",
+          "warnings": [],
+          "decodedActions": [
+            {
+              "actionType": "erc20_transfer",
+              "functionName": "erc20.transfer",
+              "selector": "0xa9059cbb",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc20",
+              "recipient": "0x3333333333333333333333333333333333333333",
+              "amount": "1",
+              "rawAmount": "1",
+              "warnings": []
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "EIP7702_AUTHORIZATION_PRESENT",
+            "severity": "critical",
+            "message": "Transaction contains an EIP-7702 authorization list that may delegate EOA execution authority.",
+            "expected": "no authorization list unless explicitly allowed",
+            "actual": "authorizationList"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": [
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x1111111111111111111111111111111111111111",
+              "delta": "-1"
+            },
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x3333333333333333333333333333333333333333",
+              "delta": "1"
+            }
+          ]
+        },
+        "saferAlternative": "Do not sign EIP-7702 authorization-list transactions unless the delegate code and policy are independently verified.",
+        "reportHash": "0x2fdb269885eff3c1f5e1ae16837ca5d8f4da4ce67f5b5451f704c9f24d309cfd"
+      }
+    },
+    {
+      "id": "native-value-hidden-in-contract-call",
+      "title": "Native value attached to token transfer calldata",
+      "source": "AgentKit",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "native-value-hidden-in-contract-call",
+        "intent": {
+          "action": "token_transfer",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1",
+          "description": "AgentKit benchmark: token transfer should not include native value."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "1",
+          "data": "0xa9059cbb00000000000000000000000033333333333333333333333333333333333333330000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      "report": {
+        "requestId": "native-value-hidden-in-contract-call",
+        "verdict": "BLOCK",
+        "riskScore": 50,
+        "summary": "BLOCK: erc20 transfer classified as medium risk.",
+        "explanation": "AgentWarden decoded the transaction as erc20 transfer and found 1 issue before signing. Primary finding: Transaction includes native value but intent did not explicitly allow it.",
+        "findings": [
+          {
+            "code": "UNEXPECTED_NATIVE_VALUE",
+            "title": "Unexpected Native Value",
+            "severity": "high",
+            "detail": "Transaction includes native value but intent did not explicitly allow it.",
+            "evidence": [
+              "expected=0",
+              "actual=1"
+            ]
+          }
+        ],
+        "recommendedAction": "Do not sign this transaction. Regenerate it from trusted intent or remove the risky operation.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "erc20_transfer",
+        "decodedActions": [
+          {
+            "actionType": "erc20_transfer",
+            "functionName": "erc20.transfer",
+            "selector": "0xa9059cbb",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc20",
+            "recipient": "0x3333333333333333333333333333333333333333",
+            "amount": "1",
+            "rawAmount": "1",
+            "warnings": []
+          }
+        ],
+        "assetDeltas": [
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x1111111111111111111111111111111111111111",
+            "delta": "-1"
+          },
+          {
+            "assetStandard": "erc20",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "account": "0x3333333333333333333333333333333333333333",
+            "delta": "1"
+          }
+        ],
+        "approvalFindings": [],
+        "benchmarkProfile": "agentkit",
+        "decodedTransaction": {
+          "functionName": "erc20.transfer",
+          "actionType": "erc20_transfer",
+          "selector": "0xa9059cbb",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "recipient": "0x3333333333333333333333333333333333333333",
+          "amount": "1",
+          "rawAmount": "1",
+          "warnings": [],
+          "decodedActions": [
+            {
+              "actionType": "erc20_transfer",
+              "functionName": "erc20.transfer",
+              "selector": "0xa9059cbb",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc20",
+              "recipient": "0x3333333333333333333333333333333333333333",
+              "amount": "1",
+              "rawAmount": "1",
+              "warnings": []
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "UNEXPECTED_NATIVE_VALUE",
+            "severity": "high",
+            "message": "Transaction includes native value but intent did not explicitly allow it.",
+            "expected": "0",
+            "actual": "1"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": [
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x1111111111111111111111111111111111111111",
+              "delta": "-1"
+            },
+            {
+              "assetStandard": "erc20",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "account": "0x3333333333333333333333333333333333333333",
+              "delta": "1"
+            }
+          ]
+        },
+        "reportHash": "0x8e9be4cca377b994cda42550483542ffc5c0a1591d76082d41ab4bb0f18e9e41"
+      }
+    },
+    {
+      "id": "unknown-selector",
+      "title": "Unknown contract selector",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "unknown-selector",
+        "intent": {
+          "action": "contract_call",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "description": "Generic benchmark: opaque calldata."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0xdeadbeef"
+        }
+      },
+      "report": {
+        "requestId": "unknown-selector",
+        "verdict": "BLOCK",
+        "riskScore": 80,
+        "summary": "BLOCK: unknown contract call classified as high risk.",
+        "explanation": "AgentWarden decoded the transaction as unknown contract call and found 1 issue before signing. Primary finding: Calldata selector is unsupported by the MVP decoder.",
+        "findings": [
+          {
+            "code": "UNKNOWN_FUNCTION_SELECTOR",
+            "title": "Unknown Function Selector",
+            "severity": "high",
+            "detail": "Calldata selector is unsupported by the MVP decoder.",
+            "evidence": [
+              "actual=0xdeadbeef"
+            ]
+          }
+        ],
+        "recommendedAction": "Route this transaction to a full ABI-aware decoder and simulator before signing.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "unknown_contract_call",
+        "decodedActions": [
+          {
+            "actionType": "unknown_contract_call",
+            "functionName": "unknown",
+            "selector": "0xdeadbeef",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "unknown",
+            "warnings": [
+              "Unsupported function selector 0xdeadbeef"
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "unknown",
+          "actionType": "unknown_contract_call",
+          "selector": "0xdeadbeef",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "warnings": [
+            "Unsupported function selector 0xdeadbeef"
+          ],
+          "decodedActions": [
+            {
+              "actionType": "unknown_contract_call",
+              "functionName": "unknown",
+              "selector": "0xdeadbeef",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "unknown",
+              "warnings": [
+                "Unsupported function selector 0xdeadbeef"
+              ]
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "UNKNOWN_FUNCTION_SELECTOR",
+            "severity": "high",
+            "message": "Calldata selector is unsupported by the MVP decoder.",
+            "actual": "0xdeadbeef"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Route this transaction to a full ABI-aware decoder and simulator before signing.",
+        "reportHash": "0x166f4656d0f06bf215146f9db326988cad26c78f25e103f3148f27a54ebe4578"
+      }
+    },
+    {
+      "id": "contract-deployment",
+      "title": "Contract deployment transaction",
+      "source": "Generic",
+      "expectedVerdict": "ALLOW",
+      "passed": true,
+      "request": {
+        "requestId": "contract-deployment",
+        "intent": {
+          "action": "deployment",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "description": "Generic benchmark: deployment with explicit deployment intent."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "value": "0",
+          "data": "0x60006000"
+        }
+      },
+      "report": {
+        "requestId": "contract-deployment",
+        "verdict": "ALLOW",
+        "riskScore": 35,
+        "summary": "ALLOW: deployment classified as low risk.",
+        "explanation": "AgentWarden decoded the transaction as deployment and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+        "findings": [],
+        "recommendedAction": "Proceed only if the signer recognizes the recipient, asset, amount, and target contract.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "deployment",
+        "decodedActions": [
+          {
+            "actionType": "deployment",
+            "functionName": "contract.deployment",
+            "selector": "0x",
+            "assetStandard": "unknown",
+            "warnings": []
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "contract.deployment",
+          "actionType": "deployment",
+          "selector": "0x",
+          "warnings": [],
+          "decodedActions": [
+            {
+              "actionType": "deployment",
+              "functionName": "contract.deployment",
+              "selector": "0x",
+              "assetStandard": "unknown",
+              "warnings": []
+            }
+          ]
+        },
+        "policyViolations": [],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "reportHash": "0x6c7341947b085fdee756ba536498094ec6b606fb8f3fe8247acf9d5b8731ef58"
+      }
+    },
+    {
+      "id": "known-swap-selector",
+      "title": "Known router swap selector",
+      "source": "Eliza",
+      "expectedVerdict": "ALLOW",
+      "passed": true,
+      "request": {
+        "requestId": "known-swap-selector",
+        "intent": {
+          "action": "swap",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "description": "Eliza benchmark: swap action through known router selector."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x6666666666666666666666666666666666666666",
+          "value": "0",
+          "data": "0x38ed1739"
+        }
+      },
+      "report": {
+        "requestId": "known-swap-selector",
+        "verdict": "ALLOW",
+        "riskScore": 25,
+        "summary": "ALLOW: swap classified as low risk.",
+        "explanation": "AgentWarden decoded the transaction as swap and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+        "findings": [],
+        "recommendedAction": "Proceed only if the signer recognizes the recipient, asset, amount, and target contract.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "swap",
+        "decodedActions": [
+          {
+            "actionType": "swap",
+            "functionName": "router.swap",
+            "selector": "0x38ed1739",
+            "contractAddress": "0x6666666666666666666666666666666666666666",
+            "assetStandard": "unknown",
+            "warnings": [
+              "Known router swap selector router.swap"
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [],
+        "benchmarkProfile": "eliza",
+        "decodedTransaction": {
+          "functionName": "router.swap",
+          "actionType": "swap",
+          "selector": "0x38ed1739",
+          "contractAddress": "0x6666666666666666666666666666666666666666",
+          "warnings": [
+            "Known router swap selector router.swap"
+          ],
+          "decodedActions": [
+            {
+              "actionType": "swap",
+              "functionName": "router.swap",
+              "selector": "0x38ed1739",
+              "contractAddress": "0x6666666666666666666666666666666666666666",
+              "assetStandard": "unknown",
+              "warnings": [
+                "Known router swap selector router.swap"
+              ]
+            }
+          ]
+        },
+        "policyViolations": [],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "reportHash": "0x03d6eecb4cc34b02918a943b0767c6e1be8cb50f20e4db65c95bc2a553a06f36"
+      }
+    }
+  ]
+}

@@ -24,10 +24,29 @@ export interface SimulationResult {
   revertReason?: string;
 }
 
+export type ReportFindingSeverity =
+  | "info"
+  | "low"
+  | "medium"
+  | "high"
+  | "critical";
+
+export interface ReportFinding {
+  code: string;
+  title: string;
+  severity: ReportFindingSeverity;
+  detail: string;
+  evidence: string[];
+}
+
 export interface SecurityReport {
   requestId?: string;
   verdict: Verdict;
   riskScore: number;
+  summary: string;
+  explanation: string;
+  findings: ReportFinding[];
+  recommendedAction: string;
   transactionEnvelope: TransactionEnvelope;
   actionType: ActionType;
   decodedActions: DecodedAction[];

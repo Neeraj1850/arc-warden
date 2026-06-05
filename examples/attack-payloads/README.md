@@ -23,6 +23,13 @@ Runs directly against `@agent-warden/core` without starting the API.
 pnpm --filter @agent-warden/attack-payloads local
 ```
 
+This also writes reproducible demo artifacts:
+
+- `examples/attack-payloads/results/demo-report.md`
+- `examples/attack-payloads/results/demo-report.json`
+
+Use `pnpm --filter @agent-warden/attack-payloads local -- --no-artifacts` to skip artifact generation.
+
 ## API Mode
 
 Start the API with x402 disabled:
@@ -37,6 +44,8 @@ Run the payload suite:
 ```bash
 pnpm --filter @agent-warden/attack-payloads api
 ```
+
+API mode writes the same artifacts, but the reports come from the running `POST /analyze` service.
 
 Override the API URL:
 

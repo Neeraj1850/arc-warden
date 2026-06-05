@@ -25,6 +25,9 @@ describe("analyzeTransaction", () => {
     assert.equal(report.actionType, "erc20_transfer");
     assert.equal(report.decodedActions[0]?.assetStandard, "erc20");
     assert.equal(report.policyViolations.length, 0);
+    assert.match(report.summary, /^ALLOW: erc20 transfer/);
+    assert.equal(report.findings.length, 0);
+    assert.match(report.recommendedAction, /Proceed only if/);
     assert.match(report.reportHash, /^0x[a-f0-9]{64}$/);
   });
 
@@ -42,6 +45,9 @@ describe("analyzeTransaction", () => {
 
     assert.equal(report.verdict, "BLOCK");
     assert.ok(report.policyViolations.some((violation) => violation.code === "UNLIMITED_APPROVAL"));
+    assert.ok(report.findings.some((finding) => finding.code === "UNLIMITED_APPROVAL"));
+    assert.match(report.explanation, /Primary finding/);
+    assert.match(report.recommendedAction, /bounded approval/);
   });
 
   it("blocks unknown function selector", () => {
