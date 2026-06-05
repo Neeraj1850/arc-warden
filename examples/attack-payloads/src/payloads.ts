@@ -168,6 +168,53 @@ export const demoPayloads: DemoPayload[] = [
     }
   },
   {
+    id: "permit-signature-approval",
+    title: "Permit signature approval attempt",
+    source: "Generic",
+    expectedVerdict: "BLOCK",
+    request: {
+      requestId: "permit-signature-approval",
+      intent: {
+        action: "approval",
+        chainId: CHAIN_ID,
+        from: FROM,
+        tokenAddress: TOKEN,
+        spender: SPENDER,
+        description: "Generic benchmark: EIP-2612 permit should not bypass review."
+      },
+      transaction: {
+        chainId: CHAIN_ID,
+        from: FROM,
+        to: TOKEN,
+        value: "0",
+        data: `0xd505accf${"0".repeat(64 * 7)}` as `0x${string}`
+      }
+    }
+  },
+  {
+    id: "eip4337-hidden-approval",
+    title: "EIP-4337 bundle containing approval selector",
+    source: "Generic",
+    expectedVerdict: "BLOCK",
+    request: {
+      requestId: "eip4337-hidden-approval",
+      intent: {
+        action: "contract_call",
+        chainId: CHAIN_ID,
+        from: FROM,
+        description:
+          "Generic benchmark: account abstraction bundle requires recursive review."
+      },
+      transaction: {
+        chainId: CHAIN_ID,
+        from: FROM,
+        to: ROUTER,
+        value: "0",
+        data: `0x1fad948c${"0".repeat(64)}095ea7b3${"0".repeat(120)}` as `0x${string}`
+      }
+    }
+  },
+  {
     id: "native-value-hidden-in-contract-call",
     title: "Native value attached to token transfer calldata",
     source: "AgentKit",

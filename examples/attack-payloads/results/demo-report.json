@@ -1,7 +1,7 @@
 {
   "generatedAt": "deterministic-local-run",
   "mode": "local",
-  "total": 10,
+  "total": 12,
   "failures": 0,
   "results": [
     {
@@ -33,6 +33,14 @@
         "requestId": "agentkit-safe-erc20-transfer",
         "verdict": "ALLOW",
         "riskScore": 5,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "ALLOW: erc20 transfer classified as low risk.",
         "explanation": "AgentWarden decoded the transaction as erc20 transfer and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
         "findings": [],
@@ -119,7 +127,7 @@
             }
           ]
         },
-        "reportHash": "0x92c363442c3db76db70a331a51295dbc0368cdf636945524f7f314182dff782b"
+        "reportHash": "0xe27521cc93cd5227054f1f736c2f0780450a84ec43a5b17a86a48f8e22f2a315"
       }
     },
     {
@@ -151,6 +159,14 @@
         "requestId": "goat-unlimited-erc20-approval",
         "verdict": "BLOCK",
         "riskScore": 95,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 90,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: erc20 approval classified as critical risk.",
         "explanation": "AgentWarden decoded the transaction as erc20 approval and found 2 issues before signing. Primary finding: Transaction grants an unlimited ERC-20 allowance.",
         "findings": [
@@ -254,7 +270,7 @@
           "balanceDeltas": []
         },
         "saferAlternative": "Use a bounded approval for the exact intended amount or a short-lived spending allowance.",
-        "reportHash": "0xfec8f13da14085e52688595249cad590118e5eba20913666caa70bcc3854132e"
+        "reportHash": "0x057172b7c269343c9f611e94aaa9be6dcfdbb5623fabe738e329cd06f1f7427b"
       }
     },
     {
@@ -285,6 +301,14 @@
         "requestId": "eliza-erc721-set-approval-for-all",
         "verdict": "BLOCK",
         "riskScore": 95,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 90,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: erc721 operator approval classified as critical risk.",
         "explanation": "AgentWarden decoded the transaction as erc721 operator approval and found 2 issues before signing. Primary finding: Transaction grants collection-wide operator permissions.",
         "findings": [
@@ -390,7 +414,7 @@
           "balanceDeltas": []
         },
         "saferAlternative": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
-        "reportHash": "0x5ced29b841f3a4d5501c0538d6c19e034c707a34ed42b91a5e64ec756185ca25"
+        "reportHash": "0x82344013670764b79ff4d3730cbcf39d0c52e4572184b984f65c284e16bff3d6"
       }
     },
     {
@@ -421,6 +445,14 @@
         "requestId": "erc1155-set-approval-for-all",
         "verdict": "BLOCK",
         "riskScore": 95,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 90,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: erc1155 operator approval classified as critical risk.",
         "explanation": "AgentWarden decoded the transaction as erc1155 operator approval and found 2 issues before signing. Primary finding: Transaction grants collection-wide operator permissions.",
         "findings": [
@@ -526,7 +558,7 @@
           "balanceDeltas": []
         },
         "saferAlternative": "Avoid collection-wide operator approval. Use token-specific approval or execute through a tightly scoped smart account policy.",
-        "reportHash": "0x6cc79c17c16e9d74053d615861f455eaac0fdff300def193739e0a18261e77ee"
+        "reportHash": "0xf67ddb7ed7c8440a3943d25c86df931ce7528f87f6ca0c6010b786c0976fc48c"
       }
     },
     {
@@ -555,6 +587,14 @@
         "requestId": "multicall-hidden-approval",
         "verdict": "BLOCK",
         "riskScore": 100,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 95,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: multicall classified as critical risk.",
         "explanation": "AgentWarden decoded the transaction as multicall and found 2 issues before signing. Primary finding: Multicall contains nested approval or swap selectors that require stricter review.",
         "findings": [
@@ -663,7 +703,7 @@
           "balanceDeltas": []
         },
         "saferAlternative": "Split the multicall into individual transactions or simulate and review every nested call before signing.",
-        "reportHash": "0xf9a80489c9ce40214e784ebbb884ebb052f52dbac1566a7d13e7ba12c4b85881"
+        "reportHash": "0xce75cd17220d225698b9a223ae45b2117eaa75e04f86f15639378a48c760b8df"
       }
     },
     {
@@ -701,6 +741,14 @@
         "requestId": "eip7702-authorization-list",
         "verdict": "BLOCK",
         "riskScore": 85,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 95,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: erc20 transfer classified as high risk.",
         "explanation": "AgentWarden decoded the transaction as erc20 transfer and found 1 issue before signing. Primary finding: Transaction contains an EIP-7702 authorization list that may delegate EOA execution authority.",
         "findings": [
@@ -808,7 +856,290 @@
           ]
         },
         "saferAlternative": "Do not sign EIP-7702 authorization-list transactions unless the delegate code and policy are independently verified.",
-        "reportHash": "0x2fdb269885eff3c1f5e1ae16837ca5d8f4da4ce67f5b5451f704c9f24d309cfd"
+        "reportHash": "0x4d269bce1187d7775fdc592cf8275cdf2f0b118fa62df5d259f158c52d575e31"
+      }
+    },
+    {
+      "id": "permit-signature-approval",
+      "title": "Permit signature approval attempt",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "permit-signature-approval",
+        "intent": {
+          "action": "approval",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "description": "Generic benchmark: EIP-2612 permit should not bypass review."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0",
+          "data": "0xd505accf0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "report": {
+        "requestId": "permit-signature-approval",
+        "verdict": "BLOCK",
+        "riskScore": 100,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 95,
+          "intentDelta": 90,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
+        "summary": "BLOCK: permit signature classified as critical risk.",
+        "explanation": "AgentWarden decoded the transaction as permit signature and found 2 issues before signing. Primary finding: Intent expects an approval, but transaction performs a different action.",
+        "findings": [
+          {
+            "code": "ACTION_MISMATCH",
+            "title": "Action Mismatch",
+            "severity": "high",
+            "detail": "Intent expects an approval, but transaction performs a different action.",
+            "evidence": [
+              "expected=approval",
+              "actual=permit_signature"
+            ]
+          },
+          {
+            "code": "PERMIT_SIGNATURE_APPROVAL",
+            "title": "Permit Signature Approval",
+            "severity": "critical",
+            "detail": "Permit-style approval detected. Off-chain token spending signatures must not be treated as ordinary transaction calldata.",
+            "evidence": [
+              "expected=no permit or Permit2 approval unless explicitly reviewed",
+              "actual=erc20.permit"
+            ]
+          }
+        ],
+        "recommendedAction": "Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "permit_signature",
+        "decodedActions": [
+          {
+            "actionType": "permit_signature",
+            "functionName": "erc20.permit",
+            "selector": "0xd505accf",
+            "contractAddress": "0x2222222222222222222222222222222222222222",
+            "tokenAddress": "0x2222222222222222222222222222222222222222",
+            "assetStandard": "erc20",
+            "warnings": [
+              "Permit-style approval detected. This may authorize token spending through signed data rather than an ERC-20 approve transaction."
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "erc20.permit",
+          "actionType": "permit_signature",
+          "selector": "0xd505accf",
+          "contractAddress": "0x2222222222222222222222222222222222222222",
+          "tokenAddress": "0x2222222222222222222222222222222222222222",
+          "warnings": [
+            "Permit-style approval detected. This may authorize token spending through signed data rather than an ERC-20 approve transaction."
+          ],
+          "decodedActions": [
+            {
+              "actionType": "permit_signature",
+              "functionName": "erc20.permit",
+              "selector": "0xd505accf",
+              "contractAddress": "0x2222222222222222222222222222222222222222",
+              "tokenAddress": "0x2222222222222222222222222222222222222222",
+              "assetStandard": "erc20",
+              "warnings": [
+                "Permit-style approval detected. This may authorize token spending through signed data rather than an ERC-20 approve transaction."
+              ]
+            }
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "ACTION_MISMATCH",
+            "severity": "high",
+            "message": "Intent expects an approval, but transaction performs a different action.",
+            "expected": "approval",
+            "actual": "permit_signature"
+          },
+          {
+            "code": "PERMIT_SIGNATURE_APPROVAL",
+            "severity": "critical",
+            "message": "Permit-style approval detected. Off-chain token spending signatures must not be treated as ordinary transaction calldata.",
+            "expected": "no permit or Permit2 approval unless explicitly reviewed",
+            "actual": "erc20.permit"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.",
+        "reportHash": "0x69ff02eab3f045c96d0e888e77ed5e6a4e97870721b730b2bcb3d58fcf4143d2"
+      }
+    },
+    {
+      "id": "eip4337-hidden-approval",
+      "title": "EIP-4337 bundle containing approval selector",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "eip4337-hidden-approval",
+        "intent": {
+          "action": "contract_call",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "description": "Generic benchmark: account abstraction bundle requires recursive review."
+        },
+        "transaction": {
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x6666666666666666666666666666666666666666",
+          "value": "0",
+          "data": "0x1fad948c0000000000000000000000000000000000000000000000000000000000000000095ea7b3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "report": {
+        "requestId": "eip4337-hidden-approval",
+        "verdict": "BLOCK",
+        "riskScore": 85,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 95,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
+        "summary": "BLOCK: account abstraction classified as high risk.",
+        "explanation": "AgentWarden decoded the transaction as account abstraction and found 2 issues before signing. Primary finding: EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it.",
+        "findings": [
+          {
+            "code": "EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW",
+            "title": "Eip4337 Userop Requires Recursive Review",
+            "severity": "critical",
+            "detail": "EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it.",
+            "evidence": [
+              "expected=fully decoded UserOperation callData",
+              "actual=erc4337.handleOps"
+            ]
+          },
+          {
+            "code": "APPROVAL_ERC20",
+            "title": "ERC20 approval",
+            "severity": "medium",
+            "detail": "ERC-20 allowance change.",
+            "evidence": [
+              "standard=erc20",
+              "token=0x6666666666666666666666666666666666666666"
+            ]
+          }
+        ],
+        "recommendedAction": "Unwrap every EIP-4337 UserOperation callData item and analyze each inner transaction before signing or bundling.",
+        "transactionEnvelope": {
+          "type": "legacy",
+          "hasAccessList": false,
+          "hasBlobFields": false,
+          "hasAuthorizationList": false
+        },
+        "actionType": "account_abstraction",
+        "decodedActions": [
+          {
+            "actionType": "account_abstraction",
+            "functionName": "erc4337.handleOps",
+            "selector": "0x1fad948c",
+            "contractAddress": "0x6666666666666666666666666666666666666666",
+            "assetStandard": "unknown",
+            "warnings": [
+              "EIP-4337 handleOps-style transaction detected. UserOperation callData requires recursive review before signing."
+            ]
+          },
+          {
+            "actionType": "erc20_approval",
+            "functionName": "erc20.approve",
+            "selector": "0x095ea7b3",
+            "contractAddress": "0x6666666666666666666666666666666666666666",
+            "assetStandard": "erc20",
+            "warnings": [
+              "Nested approval selector detected inside EIP-4337 calldata."
+            ]
+          }
+        ],
+        "assetDeltas": [],
+        "approvalFindings": [
+          {
+            "standard": "erc20",
+            "owner": "0x1111111111111111111111111111111111111111",
+            "tokenAddress": "0x6666666666666666666666666666666666666666",
+            "isUnlimited": false,
+            "risk": "medium",
+            "message": "ERC-20 allowance change."
+          }
+        ],
+        "benchmarkProfile": "generic",
+        "decodedTransaction": {
+          "functionName": "erc4337.handleOps",
+          "actionType": "account_abstraction",
+          "selector": "0x1fad948c",
+          "contractAddress": "0x6666666666666666666666666666666666666666",
+          "decodedActions": [
+            {
+              "actionType": "account_abstraction",
+              "functionName": "erc4337.handleOps",
+              "selector": "0x1fad948c",
+              "contractAddress": "0x6666666666666666666666666666666666666666",
+              "assetStandard": "unknown",
+              "warnings": [
+                "EIP-4337 handleOps-style transaction detected. UserOperation callData requires recursive review before signing."
+              ]
+            },
+            {
+              "actionType": "erc20_approval",
+              "functionName": "erc20.approve",
+              "selector": "0x095ea7b3",
+              "contractAddress": "0x6666666666666666666666666666666666666666",
+              "assetStandard": "erc20",
+              "warnings": [
+                "Nested approval selector detected inside EIP-4337 calldata."
+              ]
+            }
+          ],
+          "warnings": [
+            "EIP-4337 handleOps-style transaction detected. UserOperation callData requires recursive review before signing."
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW",
+            "severity": "critical",
+            "message": "EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it.",
+            "expected": "fully decoded UserOperation callData",
+            "actual": "erc4337.handleOps"
+          }
+        ],
+        "simulationResult": {
+          "status": "not_run",
+          "engine": "local-static",
+          "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
+          "balanceDeltas": []
+        },
+        "saferAlternative": "Unwrap every EIP-4337 UserOperation callData item and analyze each inner transaction before signing or bundling.",
+        "reportHash": "0xcbb3574b46b667b84b8159bc355f416cea4235f78fb6d945d31a131faa8e4fe5"
       }
     },
     {
@@ -840,6 +1171,14 @@
         "requestId": "native-value-hidden-in-contract-call",
         "verdict": "BLOCK",
         "riskScore": 50,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 5,
+          "intentDelta": 70,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: erc20 transfer classified as medium risk.",
         "explanation": "AgentWarden decoded the transaction as erc20 transfer and found 1 issue before signing. Primary finding: Transaction includes native value but intent did not explicitly allow it.",
         "findings": [
@@ -945,7 +1284,7 @@
             }
           ]
         },
-        "reportHash": "0x8e9be4cca377b994cda42550483542ffc5c0a1591d76082d41ab4bb0f18e9e41"
+        "reportHash": "0x485ebf5641cdcb142c62e3bd2cba7c095dffd806fbb1f34d21930cd1d7de8c34"
       }
     },
     {
@@ -975,6 +1314,14 @@
         "requestId": "unknown-selector",
         "verdict": "BLOCK",
         "riskScore": 80,
+        "riskVector": {
+          "contractRisk": 80,
+          "tokenRisk": 5,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "BLOCK: unknown contract call classified as high risk.",
         "explanation": "AgentWarden decoded the transaction as unknown contract call and found 1 issue before signing. Primary finding: Calldata selector is unsupported by the MVP decoder.",
         "findings": [
@@ -1050,7 +1397,7 @@
           "balanceDeltas": []
         },
         "saferAlternative": "Route this transaction to a full ABI-aware decoder and simulator before signing.",
-        "reportHash": "0x166f4656d0f06bf215146f9db326988cad26c78f25e103f3148f27a54ebe4578"
+        "reportHash": "0xf8e99e17d59542c1b7fb2d260999a702d3f793fe019a309db0df28725015d676"
       }
     },
     {
@@ -1078,6 +1425,14 @@
         "requestId": "contract-deployment",
         "verdict": "ALLOW",
         "riskScore": 35,
+        "riskVector": {
+          "contractRisk": 35,
+          "tokenRisk": 5,
+          "behaviorRisk": 5,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "ALLOW: deployment classified as low risk.",
         "explanation": "AgentWarden decoded the transaction as deployment and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
         "findings": [],
@@ -1123,7 +1478,7 @@
           "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
           "balanceDeltas": []
         },
-        "reportHash": "0x6c7341947b085fdee756ba536498094ec6b606fb8f3fe8247acf9d5b8731ef58"
+        "reportHash": "0xdf92d36de62a02d488ba01e9fd3396efef63d6c23a6445a8df82a6cdc07350fe"
       }
     },
     {
@@ -1152,6 +1507,14 @@
         "requestId": "known-swap-selector",
         "verdict": "ALLOW",
         "riskScore": 25,
+        "riskVector": {
+          "contractRisk": 5,
+          "tokenRisk": 5,
+          "behaviorRisk": 45,
+          "intentDelta": 0,
+          "sanctionsRisk": 0,
+          "simulationRisk": 0
+        },
         "summary": "ALLOW: swap classified as low risk.",
         "explanation": "AgentWarden decoded the transaction as swap and found no deterministic policy violations before signing. Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
         "findings": [],
@@ -1206,7 +1569,7 @@
           "summary": "Static analysis only. Set ANALYSIS_RPC_URL to run eth_call simulation.",
           "balanceDeltas": []
         },
-        "reportHash": "0x03d6eecb4cc34b02918a943b0767c6e1be8cb50f20e4db65c95bc2a553a06f36"
+        "reportHash": "0x3faf53820ad64587c1333a72d3e9019dc8c8286ba769de6ca4477d13f0d91d33"
       }
     }
   ]

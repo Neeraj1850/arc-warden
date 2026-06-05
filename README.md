@@ -19,6 +19,7 @@ The MVP is intentionally deterministic. It receives structured intent plus unsig
 
 - `ALLOW`, `WARN`, or `BLOCK`
 - deterministic risk score
+- multi-dimensional risk vector
 - decoded transaction
 - policy violations
 - human-readable summary, findings, and recommended action
@@ -83,6 +84,17 @@ pnpm dev
 
 The current MVP does not require paid APIs or external services.
 
+Machine-readable API contract: [`docs/openapi.yaml`](docs/openapi.yaml).
+
+Release notes are tracked with Changesets metadata in [`.changeset`](.changeset).
+
+Optional enrichments are disabled by default:
+
+- `GROQ_API_KEY` + `GROQ_MODEL` enable the LangChain/Groq report explainer.
+- `TENDERLY_RPC_URL` enables Tenderly simulation instead of raw `eth_call`.
+- `GOPLUS_ENABLED=true` enables GoPlus address checks for MCP `check_address`.
+- `ANALYSIS_RPC_URL` can be used by whatsabi helpers for dynamic ABI recovery.
+
 ## Mock Agent Flow
 
 The mock agent simulates an AI agent with a wallet address preparing an unsigned Ethereum Sepolia transaction.
@@ -124,6 +136,8 @@ pnpm --filter @agent-warden/attack-payloads api
 ```
 
 The suite covers safe transfers, unlimited approvals, NFT operator approvals, suspicious multicalls, EIP-7702 authorization lists, hidden native value, unknown selectors, deployments, and swap selectors.
+
+It also includes permit-style approvals and EIP-4337 account abstraction bundles as bypass regression cases.
 
 Each run writes reviewer-friendly artifacts:
 

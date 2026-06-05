@@ -9,6 +9,7 @@ Accepts the same payload as `POST /analyze`.
 - validates structured intent and unsigned transaction data
 - delegates to the deterministic core analyzer
 - returns the full security report, including summary, findings, recommended action, and report hash
+- marks the MCP tool result as `isError: true` when the verdict is `BLOCK`
 - logs verdict, risk score, and report hash to stderr for local demo tracing
 
 ## Current Transport
@@ -40,6 +41,12 @@ The client:
 - sends a safe ERC-20 transfer and expects `ALLOW`
 - sends an unlimited ERC-20 approval and expects `BLOCK`
 - prints summary, recommended action, risk score, action type, and report hash
+
+## Additional Tools
+
+- `decode_calldata`: decodes unsigned EVM transaction calldata without policy or scoring.
+- `get_policy`: returns the active deterministic policy flags.
+- `check_address`: validates one EVM address and optionally calls GoPlus when `GOPLUS_ENABLED=true`.
 
 ## x402 Split
 

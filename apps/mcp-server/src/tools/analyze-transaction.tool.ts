@@ -1,7 +1,5 @@
-﻿import {
-  analyzeTransactionWithSimulation,
-  type AnalysisRequest
-} from "@agent-warden/core";
+import { analyzeTransactionWithSimulation } from "@agent-warden/core";
+import type { AnalysisRequest } from "@agent-warden/types";
 import { analyzeTransactionInputSchema } from "../schemas/mcp.schemas.js";
 
 export const analyzeTransactionToolName = "analyze_transaction";
@@ -23,7 +21,8 @@ export async function executeAnalyzeTransactionTool(input: AnalysisRequest) {
         type: "text" as const,
         text: JSON.stringify(report, bigintJsonReplacer, 2)
       }
-    ]
+    ],
+    isError: report.verdict === "BLOCK"
   };
 }
 

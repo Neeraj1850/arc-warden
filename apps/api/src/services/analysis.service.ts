@@ -1,9 +1,9 @@
-﻿import {
+import {
   analyzeTransactionWithSimulation,
-  type AnalysisRequest,
-  type SecurityReport
+  validateAnalysisRequest
 } from "@agent-warden/core";
+import type { SecurityReport } from "@agent-warden/types";
 
-export async function analyzeRequest(request: AnalysisRequest): Promise<SecurityReport> {
-  return analyzeTransactionWithSimulation(request);
+export async function analyzeRequest(request: unknown): Promise<SecurityReport> {
+  return analyzeTransactionWithSimulation(validateAnalysisRequest(request));
 }

@@ -5,7 +5,7 @@ import type {
   Address,
   SecurityReport,
   Verdict
-} from "@agent-warden/core";
+} from "@agent-warden/types";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { analyzeTransactionToolName } from "./tools/analyze-transaction.tool.js";

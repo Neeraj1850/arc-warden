@@ -2,7 +2,7 @@
 
 Generated: deterministic-local-run
 Mode: local
-Total: 10
+Total: 12
 Failures: 0
 
 | Payload | Source | Expected | Actual | Risk | Action | Result |
@@ -13,6 +13,8 @@ Failures: 0
 | erc1155-set-approval-for-all | Generic | BLOCK | BLOCK | 95 | erc1155_operator_approval | PASS |
 | multicall-hidden-approval | GOAT | BLOCK | BLOCK | 100 | multicall | PASS |
 | eip7702-authorization-list | Generic | BLOCK | BLOCK | 85 | erc20_transfer | PASS |
+| permit-signature-approval | Generic | BLOCK | BLOCK | 100 | permit_signature | PASS |
+| eip4337-hidden-approval | Generic | BLOCK | BLOCK | 85 | account_abstraction | PASS |
 | native-value-hidden-in-contract-call | AgentKit | BLOCK | BLOCK | 50 | erc20_transfer | PASS |
 | unknown-selector | Generic | BLOCK | BLOCK | 80 | unknown_contract_call | PASS |
 | contract-deployment | Generic | ALLOW | ALLOW | 35 | deployment | PASS |
@@ -25,7 +27,7 @@ Source: AgentKit
 Verdict: ALLOW
 Risk score: 5
 Action: erc20_transfer
-Report hash: `0x92c363442c3db76db70a331a51295dbc0368cdf636945524f7f314182dff782b`
+Report hash: `0xe27521cc93cd5227054f1f736c2f0780450a84ec43a5b17a86a48f8e22f2a315`
 
 Summary: ALLOW: erc20 transfer classified as low risk.
 
@@ -43,7 +45,7 @@ Source: GOAT
 Verdict: BLOCK
 Risk score: 95
 Action: erc20_approval
-Report hash: `0xfec8f13da14085e52688595249cad590118e5eba20913666caa70bcc3854132e`
+Report hash: `0x057172b7c269343c9f611e94aaa9be6dcfdbb5623fabe738e329cd06f1f7427b`
 
 Summary: BLOCK: erc20 approval classified as critical risk.
 
@@ -62,7 +64,7 @@ Source: Eliza
 Verdict: BLOCK
 Risk score: 95
 Action: erc721_operator_approval
-Report hash: `0x5ced29b841f3a4d5501c0538d6c19e034c707a34ed42b91a5e64ec756185ca25`
+Report hash: `0x82344013670764b79ff4d3730cbcf39d0c52e4572184b984f65c284e16bff3d6`
 
 Summary: BLOCK: erc721 operator approval classified as critical risk.
 
@@ -81,7 +83,7 @@ Source: Generic
 Verdict: BLOCK
 Risk score: 95
 Action: erc1155_operator_approval
-Report hash: `0x6cc79c17c16e9d74053d615861f455eaac0fdff300def193739e0a18261e77ee`
+Report hash: `0xf67ddb7ed7c8440a3943d25c86df931ce7528f87f6ca0c6010b786c0976fc48c`
 
 Summary: BLOCK: erc1155 operator approval classified as critical risk.
 
@@ -100,7 +102,7 @@ Source: GOAT
 Verdict: BLOCK
 Risk score: 100
 Action: multicall
-Report hash: `0xf9a80489c9ce40214e784ebbb884ebb052f52dbac1566a7d13e7ba12c4b85881`
+Report hash: `0xce75cd17220d225698b9a223ae45b2117eaa75e04f86f15639378a48c760b8df`
 
 Summary: BLOCK: multicall classified as critical risk.
 
@@ -119,7 +121,7 @@ Source: Generic
 Verdict: BLOCK
 Risk score: 85
 Action: erc20_transfer
-Report hash: `0x2fdb269885eff3c1f5e1ae16837ca5d8f4da4ce67f5b5451f704c9f24d309cfd`
+Report hash: `0x4d269bce1187d7775fdc592cf8275cdf2f0b118fa62df5d259f158c52d575e31`
 
 Summary: BLOCK: erc20 transfer classified as high risk.
 
@@ -130,6 +132,44 @@ Findings:
 
 Recommended action: Do not sign EIP-7702 authorization-list transactions unless the delegate code and policy are independently verified.
 
+## Permit signature approval attempt
+
+Payload: `permit-signature-approval`
+Source: Generic
+Verdict: BLOCK
+Risk score: 100
+Action: permit_signature
+Report hash: `0x69ff02eab3f045c96d0e888e77ed5e6a4e97870721b730b2bcb3d58fcf4143d2`
+
+Summary: BLOCK: permit signature classified as critical risk.
+
+AgentWarden decoded the transaction as permit signature and found 2 issues before signing. Primary finding: Intent expects an approval, but transaction performs a different action.
+
+Findings:
+- HIGH ACTION_MISMATCH: Intent expects an approval, but transaction performs a different action. Evidence: expected=approval, actual=permit_signature.
+- CRITICAL PERMIT_SIGNATURE_APPROVAL: Permit-style approval detected. Off-chain token spending signatures must not be treated as ordinary transaction calldata. Evidence: expected=no permit or Permit2 approval unless explicitly reviewed, actual=erc20.permit.
+
+Recommended action: Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.
+
+## EIP-4337 bundle containing approval selector
+
+Payload: `eip4337-hidden-approval`
+Source: Generic
+Verdict: BLOCK
+Risk score: 85
+Action: account_abstraction
+Report hash: `0xcbb3574b46b667b84b8159bc355f416cea4235f78fb6d945d31a131faa8e4fe5`
+
+Summary: BLOCK: account abstraction classified as high risk.
+
+AgentWarden decoded the transaction as account abstraction and found 2 issues before signing. Primary finding: EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it.
+
+Findings:
+- CRITICAL EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW: EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it. Evidence: expected=fully decoded UserOperation callData, actual=erc4337.handleOps.
+- MEDIUM APPROVAL_ERC20: ERC-20 allowance change. Evidence: standard=erc20, token=0x6666666666666666666666666666666666666666.
+
+Recommended action: Unwrap every EIP-4337 UserOperation callData item and analyze each inner transaction before signing or bundling.
+
 ## Native value attached to token transfer calldata
 
 Payload: `native-value-hidden-in-contract-call`
@@ -137,7 +177,7 @@ Source: AgentKit
 Verdict: BLOCK
 Risk score: 50
 Action: erc20_transfer
-Report hash: `0x8e9be4cca377b994cda42550483542ffc5c0a1591d76082d41ab4bb0f18e9e41`
+Report hash: `0x485ebf5641cdcb142c62e3bd2cba7c095dffd806fbb1f34d21930cd1d7de8c34`
 
 Summary: BLOCK: erc20 transfer classified as medium risk.
 
@@ -155,7 +195,7 @@ Source: Generic
 Verdict: BLOCK
 Risk score: 80
 Action: unknown_contract_call
-Report hash: `0x166f4656d0f06bf215146f9db326988cad26c78f25e103f3148f27a54ebe4578`
+Report hash: `0xf8e99e17d59542c1b7fb2d260999a702d3f793fe019a309db0df28725015d676`
 
 Summary: BLOCK: unknown contract call classified as high risk.
 
@@ -173,7 +213,7 @@ Source: Generic
 Verdict: ALLOW
 Risk score: 35
 Action: deployment
-Report hash: `0x6c7341947b085fdee756ba536498094ec6b606fb8f3fe8247acf9d5b8731ef58`
+Report hash: `0xdf92d36de62a02d488ba01e9fd3396efef63d6c23a6445a8df82a6cdc07350fe`
 
 Summary: ALLOW: deployment classified as low risk.
 
@@ -191,7 +231,7 @@ Source: Eliza
 Verdict: ALLOW
 Risk score: 25
 Action: swap
-Report hash: `0x03d6eecb4cc34b02918a943b0767c6e1be8cb50f20e4db65c95bc2a553a06f36`
+Report hash: `0x3faf53820ad64587c1333a72d3e9019dc8c8286ba769de6ca4477d13f0d91d33`
 
 Summary: ALLOW: swap classified as low risk.
 

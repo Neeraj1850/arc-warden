@@ -21,7 +21,15 @@ export const SELECTORS = {
   uniswapV3ExactInputSingle: "0x414bf389",
   uniswapV3ExactInput: "0xc04b8d59",
   uniswapV3ExactOutputSingle: "0xdb3e2198",
-  uniswapV3ExactOutput: "0xf28c0498"
+  uniswapV3ExactOutput: "0xf28c0498",
+  eip2612Permit: "0xd505accf",
+  daiLikePermit: "0x8fcbaf0c",
+  permit2PermitSingle: "0x2b67b570",
+  permit2PermitBatch: "0x56684434",
+  permit2PermitTransferFrom: "0x6949bce4",
+  permit2PermitWitnessTransferFrom: "0xf443b753",
+  erc4337HandleOps: "0x1fad948c",
+  erc4337HandleAggregatedOps: "0x73695b59"
 } as const satisfies Record<string, Hex>;
 
 export const SWAP_SELECTORS = new Set<Hex>([
@@ -38,6 +46,20 @@ export const SWAP_SELECTORS = new Set<Hex>([
 export const MULTICALL_SELECTORS = new Set<Hex>([
   SELECTORS.multicallBytes,
   SELECTORS.multicallDeadlineBytes
+]);
+
+export const PERMIT_SELECTORS = new Set<Hex>([
+  SELECTORS.eip2612Permit,
+  SELECTORS.daiLikePermit,
+  SELECTORS.permit2PermitSingle,
+  SELECTORS.permit2PermitBatch,
+  SELECTORS.permit2PermitTransferFrom,
+  SELECTORS.permit2PermitWitnessTransferFrom
+]);
+
+export const ACCOUNT_ABSTRACTION_SELECTORS = new Set<Hex>([
+  SELECTORS.erc4337HandleOps,
+  SELECTORS.erc4337HandleAggregatedOps
 ]);
 
 export function selectorLabel(selector: Hex): DecodedFunctionName {
@@ -67,6 +89,28 @@ export function selectorLabel(selector: Hex): DecodedFunctionName {
 
   if (MULTICALL_SELECTORS.has(selector)) {
     return "multicall";
+  }
+
+  if (selector === SELECTORS.eip2612Permit || selector === SELECTORS.daiLikePermit) {
+    return "erc20.permit";
+  }
+
+  if (
+    selector === SELECTORS.permit2PermitSingle ||
+    selector === SELECTORS.permit2PermitBatch
+  ) {
+    return "permit2.permit";
+  }
+
+  if (
+    selector === SELECTORS.permit2PermitTransferFrom ||
+    selector === SELECTORS.permit2PermitWitnessTransferFrom
+  ) {
+    return "permit2.permitTransferFrom";
+  }
+
+  if (ACCOUNT_ABSTRACTION_SELECTORS.has(selector)) {
+    return "erc4337.handleOps";
   }
 
   if (SWAP_SELECTORS.has(selector)) {

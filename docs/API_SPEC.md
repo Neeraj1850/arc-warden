@@ -1,5 +1,7 @@
 # API Spec
 
+Machine-readable OpenAPI 3.1 contract: [`docs/openapi.yaml`](./openapi.yaml).
+
 ## `GET /health`
 
 Returns service status.
@@ -38,6 +40,7 @@ The V1 response also includes:
 
 - `transactionEnvelope`
 - `actionType`
+- `riskVector`
 - `decodedActions`
 - `assetDeltas`
 - `approvalFindings`

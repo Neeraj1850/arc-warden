@@ -34,10 +34,20 @@ export interface ReportFinding {
   evidence: string[];
 }
 
+export interface RiskVector {
+  contractRisk: number;
+  tokenRisk: number;
+  behaviorRisk: number;
+  intentDelta: number;
+  sanctionsRisk: number;
+  simulationRisk: number;
+}
+
 export interface SecurityReport {
   requestId?: string;
   verdict: Verdict;
   riskScore: number;
+  riskVector: RiskVector;
   summary: string;
   explanation: string;
   findings: ReportFinding[];

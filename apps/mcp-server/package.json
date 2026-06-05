@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@agent-warden/core": "workspace:*",
+    "@agent-warden/types": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.17.5",
     "zod": "^3.25.76"
   },

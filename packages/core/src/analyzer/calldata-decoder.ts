@@ -7,6 +7,8 @@ import type {
 } from "../types/transaction.types.js";
 import {
   MULTICALL_SELECTORS,
+  ACCOUNT_ABSTRACTION_SELECTORS,
+  PERMIT_SELECTORS,
   SELECTORS,
   SWAP_SELECTORS,
   selectorLabel
@@ -87,6 +89,14 @@ export function decodeCalldata(
 
   if (MULTICALL_SELECTORS.has(selector)) {
     return withActions(decodeMulticall(transaction, selector));
+  }
+
+  if (PERMIT_SELECTORS.has(selector)) {
+    return withActions(decodePermitSignature(transaction, selector));
+  }
+
+  if (ACCOUNT_ABSTRACTION_SELECTORS.has(selector)) {
+    return withActions(decodeAccountAbstraction(transaction, selector));
   }
 
   if (SWAP_SELECTORS.has(selector)) {
@@ -321,6 +331,70 @@ function decodeSwap(
     selector,
     contractAddress: normalizeAddress(transaction.to!),
     warnings: [`Known router swap selector ${selectorLabel(selector)}`]
+  };
+}
+
+function decodePermitSignature(
+  transaction: UnsignedEvmTransaction,
+  selector: Hex
+): DecodedTransaction {
+  const functionName = selectorLabel(selector);
+
+  return {
+    functionName:
+      functionName === "permit2.permitTransferFrom"
+        ? "permit2.permitTransferFrom"
+        : functionName === "permit2.permit"
+          ? "permit2.permit"
+          : "erc20.permit",
+    actionType: "permit_signature",
+    selector,
+    contractAddress: normalizeAddress(transaction.to!),
+    tokenAddress: normalizeAddress(transaction.to!),
+    warnings: [
+      "Permit-style approval detected. This may authorize token spending through signed data rather than an ERC-20 approve transaction."
+    ]
+  };
+}
+
+function decodeAccountAbstraction(
+  transaction: UnsignedEvmTransaction,
+  selector: Hex
+): DecodedTransaction {
+  const nestedActions: DecodedAction[] = [];
+  const lowerData = transaction.data.toLowerCase();
+
+  if (lowerData.includes(SELECTORS.erc20Approve.slice(2))) {
+    nestedActions.push({
+      actionType: "erc20_approval",
+      functionName: "erc20.approve",
+      selector: SELECTORS.erc20Approve,
+      contractAddress: normalizeAddress(transaction.to!),
+      assetStandard: "erc20",
+      warnings: ["Nested approval selector detected inside EIP-4337 calldata."]
+    });
+  }
+
+  if (lowerData.includes(SELECTORS.erc721SetApprovalForAll.slice(2))) {
+    nestedActions.push({
+      actionType: "erc721_operator_approval",
+      functionName: "erc721.setApprovalForAll",
+      selector: SELECTORS.erc721SetApprovalForAll,
+      contractAddress: normalizeAddress(transaction.to!),
+      assetStandard: "erc721",
+      warnings: ["Nested operator approval selector detected inside EIP-4337 calldata."]
+    });
+  }
+
+  return {
+    functionName: "erc4337.handleOps",
+    actionType: "account_abstraction",
+    selector,
+    contractAddress: normalizeAddress(transaction.to!),
+    decodedActions: nestedActions,
+    warnings: [
+      "EIP-4337 handleOps-style transaction detected. UserOperation callData requires recursive review before signing."
+    ]
   };
 }
 

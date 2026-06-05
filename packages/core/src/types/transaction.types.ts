@@ -35,6 +35,8 @@ export type ActionType =
   | "erc1155_operator_approval"
   | "swap"
   | "multicall"
+  | "permit_signature"
+  | "account_abstraction"
   | "unknown_contract_call";
 
 export type DecodedFunctionName =
@@ -50,6 +52,10 @@ export type DecodedFunctionName =
   | "erc1155.safeBatchTransferFrom"
   | "router.swap"
   | "multicall"
+  | "erc20.permit"
+  | "permit2.permit"
+  | "permit2.permitTransferFrom"
+  | "erc4337.handleOps"
   | "native.transfer"
   | "contract.deployment"
   | "unknown";

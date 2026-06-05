@@ -24,7 +24,9 @@ export function evaluatePolicies(
       intent.allowOperatorApproval
     ),
     ...detectEnvelopeRisks(intent, envelope),
-    ...detectMulticallRisks(decoded)
+    ...detectMulticallRisks(decoded),
+    ...detectPermitSignatureRisks(decoded),
+    ...detectAccountAbstractionRisks(decoded)
   ];
   const verdict = decideVerdict(violations);
 
@@ -34,6 +36,40 @@ export function evaluatePolicies(
     violations,
     saferAlternative: buildSaferAlternative(decoded, violations)
   };
+}
+
+function detectPermitSignatureRisks(decoded: DecodedTransaction): PolicyViolation[] {
+  if (decoded.actionType !== "permit_signature") {
+    return [];
+  }
+
+  return [
+    {
+      code: "PERMIT_SIGNATURE_APPROVAL",
+      severity: "critical",
+      message:
+        "Permit-style approval detected. Off-chain token spending signatures must not be treated as ordinary transaction calldata.",
+      expected: "no permit or Permit2 approval unless explicitly reviewed",
+      actual: decoded.functionName
+    }
+  ];
+}
+
+function detectAccountAbstractionRisks(decoded: DecodedTransaction): PolicyViolation[] {
+  if (decoded.actionType !== "account_abstraction") {
+    return [];
+  }
+
+  return [
+    {
+      code: "EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW",
+      severity: "critical",
+      message:
+        "EIP-4337 handleOps transaction detected. V1 must recursively unwrap UserOperation callData before allowing it.",
+      expected: "fully decoded UserOperation callData",
+      actual: decoded.functionName
+    }
+  ];
 }
 
 function detectEnvelopeRisks(
@@ -113,6 +149,18 @@ function buildSaferAlternative(
 
   if (violations.some((violation) => violation.code === "SUSPICIOUS_MULTICALL")) {
     return "Split the multicall into individual transactions or simulate and review every nested call before signing.";
+  }
+
+  if (violations.some((violation) => violation.code === "PERMIT_SIGNATURE_APPROVAL")) {
+    return "Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.";
+  }
+
+  if (
+    violations.some(
+      (violation) => violation.code === "EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW"
+    )
+  ) {
+    return "Unwrap every EIP-4337 UserOperation callData item and analyze each inner transaction before signing or bundling.";
   }
 
   if (

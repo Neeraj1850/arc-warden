@@ -1,12 +1,30 @@
 ﻿import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { AnalysisRequest } from "@agent-warden/core";
+import type { AnalysisRequest } from "@agent-warden/types";
 import {
   analyzeTransactionToolDescription,
   analyzeTransactionToolInputSchema,
   analyzeTransactionToolName,
   executeAnalyzeTransactionTool
 } from "./tools/analyze-transaction.tool.js";
+import {
+  checkAddressToolDescription,
+  checkAddressToolInputSchema,
+  checkAddressToolName,
+  executeCheckAddressTool
+} from "./tools/check-address.tool.js";
+import {
+  decodeCalldataToolDescription,
+  decodeCalldataToolInputSchema,
+  decodeCalldataToolName,
+  executeDecodeCalldataTool
+} from "./tools/decode-calldata.tool.js";
+import {
+  executeGetPolicyTool,
+  getPolicyToolDescription,
+  getPolicyToolInputSchema,
+  getPolicyToolName
+} from "./tools/get-policy.tool.js";
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
@@ -19,6 +37,26 @@ export function createMcpServer(): McpServer {
     analyzeTransactionToolDescription,
     analyzeTransactionToolInputSchema,
     async (input) => executeAnalyzeTransactionTool(input as AnalysisRequest)
+  );
+  server.tool(
+    decodeCalldataToolName,
+    decodeCalldataToolDescription,
+    decodeCalldataToolInputSchema,
+    async (input) =>
+      executeDecodeCalldataTool(input as Parameters<typeof executeDecodeCalldataTool>[0])
+  );
+  server.tool(
+    getPolicyToolName,
+    getPolicyToolDescription,
+    getPolicyToolInputSchema,
+    async () => executeGetPolicyTool()
+  );
+  server.tool(
+    checkAddressToolName,
+    checkAddressToolDescription,
+    checkAddressToolInputSchema,
+    async (input) =>
+      executeCheckAddressTool(input as Parameters<typeof executeCheckAddressTool>[0])
   );
 
   return server;
@@ -34,6 +72,18 @@ if (process.argv.includes("--describe")) {
           {
             name: analyzeTransactionToolName,
             description: analyzeTransactionToolDescription
+          },
+          {
+            name: decodeCalldataToolName,
+            description: decodeCalldataToolDescription
+          },
+          {
+            name: getPolicyToolName,
+            description: getPolicyToolDescription
+          },
+          {
+            name: checkAddressToolName,
+            description: checkAddressToolDescription
           }
         ]
       },

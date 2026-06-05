@@ -27,6 +27,7 @@ describe("analyzeTransaction", () => {
     assert.equal(report.policyViolations.length, 0);
     assert.match(report.summary, /^ALLOW: erc20 transfer/);
     assert.equal(report.findings.length, 0);
+    assert.equal(report.riskVector.behaviorRisk, 5);
     assert.match(report.recommendedAction, /Proceed only if/);
     assert.match(report.reportHash, /^0x[a-f0-9]{64}$/);
   });
@@ -74,6 +75,27 @@ describe("analyzeTransaction", () => {
       report.policyViolations.some(
         (violation) => violation.code === "UNKNOWN_FUNCTION_SELECTOR"
       )
+    );
+  });
+
+  it("rejects calldata above the V1 size ceiling", () => {
+    assert.throws(
+      () =>
+        analyzeTransaction({
+          intent: {
+            action: "contract_call",
+            chainId: CHAIN_ID,
+            from: FROM,
+            tokenAddress: USDC
+          },
+          transaction: {
+            chainId: CHAIN_ID,
+            from: FROM,
+            to: USDC,
+            data: `0x${"00".repeat(64 * 1024 + 1)}` as `0x${string}`
+          }
+        }),
+      /Calldata exceeds 65536 byte limit/
     );
   });
 
@@ -279,6 +301,62 @@ describe("analyzeTransaction", () => {
         (violation) => violation.code === "EIP7702_AUTHORIZATION_PRESENT"
       )
     );
+  });
+
+  it("blocks permit-style token approvals by default", () => {
+    const report = analyzeTransaction({
+      intent: {
+        action: "approval",
+        chainId: CHAIN_ID,
+        from: FROM,
+        tokenAddress: USDC,
+        spender: SPENDER,
+        description: "Permit approval should not bypass transaction analysis."
+      },
+      transaction: {
+        chainId: CHAIN_ID,
+        from: FROM,
+        to: USDC,
+        value: "0",
+        data: `0xd505accf${"0".repeat(64 * 7)}` as `0x${string}`
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "permit_signature");
+    assert.ok(
+      report.policyViolations.some(
+        (violation) => violation.code === "PERMIT_SIGNATURE_APPROVAL"
+      )
+    );
+    assert.equal(report.riskVector.behaviorRisk, 95);
+  });
+
+  it("blocks EIP-4337 handleOps until UserOperations are recursively decoded", () => {
+    const report = analyzeTransaction({
+      intent: {
+        action: "contract_call",
+        chainId: CHAIN_ID,
+        from: FROM,
+        description: "Account abstraction bundle."
+      },
+      transaction: {
+        chainId: CHAIN_ID,
+        from: FROM,
+        to: USDC,
+        value: "0",
+        data: `0x1fad948c${"0".repeat(64)}095ea7b3${"0".repeat(120)}` as `0x${string}`
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "account_abstraction");
+    assert.ok(
+      report.policyViolations.some(
+        (violation) => violation.code === "EIP4337_USEROP_REQUIRES_RECURSIVE_REVIEW"
+      )
+    );
+    assert.equal(report.riskVector.behaviorRisk, 95);
   });
 
   it("keeps report hash deterministic", () => {

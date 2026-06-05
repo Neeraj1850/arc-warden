@@ -1,5 +1,5 @@
 {
-  "name": "@agent-warden/core",
+  "name": "@agent-warden/types",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,14 +9,11 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx --test tests/*.test.ts",
+    "test": "echo \"types package: no runtime tests\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@langchain/core": "^1.1.48",
-    "@langchain/groq": "^1.2.1",
-    "@shazow/whatsabi": "^0.26.0",
-    "viem": "^2.52.0"
+    "@agent-warden/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
