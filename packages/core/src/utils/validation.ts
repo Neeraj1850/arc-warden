@@ -1,10 +1,17 @@
-import type { AnalysisRequest } from "../types/report.types.js";
+import type {
+  AnalysisRequest,
+  ExplainReportRequest,
+  SecurityReport
+} from "../types/report.types.js";
 import type { IntentAction } from "../types/intent.types.js";
+import type { Verdict } from "../types/policy.types.js";
 import type { Address, Hex, UnsignedEvmTransaction } from "../types/transaction.types.js";
 
 const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const HEX_PATTERN = /^0x([a-fA-F0-9]{2})*$/;
 const DECIMAL_PATTERN = /^\d+$/;
+const REPORT_HASH_PATTERN = /^0x[a-f0-9]{64}$/;
+const VERDICTS = new Set<Verdict>(["ALLOW", "WARN", "BLOCK"]);
 const INTENT_ACTIONS = new Set<IntentAction>([
   "transfer",
   "approve",
@@ -137,6 +144,38 @@ export function validateAnalysisRequest(input: unknown): AnalysisRequest {
   };
 }
 
+export function validateExplainReportRequest(input: unknown): ExplainReportRequest {
+  const request = expectObject(input, "request");
+  const report = expectObject(request.report, "report");
+  const verdict = expectString(report.verdict, "report.verdict") as Verdict;
+
+  if (!VERDICTS.has(verdict)) {
+    throw new Error(`Unsupported report verdict: ${verdict}`);
+  }
+
+  const riskScore = expectIntegerInRange(report.riskScore, "report.riskScore", 0, 100);
+  const reportHash = expectString(report.reportHash, "report.reportHash");
+
+  if (!REPORT_HASH_PATTERN.test(reportHash)) {
+    throw new Error("Expected report.reportHash to be a 0x-prefixed 32-byte hash");
+  }
+
+  expectString(report.summary, "report.summary");
+  expectString(report.recommendedAction, "report.recommendedAction");
+  expectObject(report.simulationResult, "report.simulationResult");
+  expectUnknownArray(report.findings, "report.findings");
+  expectUnknownArray(report.policyViolations, "report.policyViolations");
+
+  return {
+    report: {
+      ...(report as unknown as SecurityReport),
+      verdict,
+      riskScore,
+      reportHash
+    }
+  };
+}
+
 function validateUnsignedTransaction(
   transaction: Record<string, unknown>
 ): UnsignedEvmTransaction {
@@ -182,6 +221,32 @@ function expectString(value: unknown, field: string): string {
 function expectPositiveInteger(value: unknown, field: string): number {
   if (!Number.isInteger(value) || typeof value !== "number" || value <= 0) {
     throw new Error(`Expected ${field} to be a positive integer`);
+  }
+
+  return value;
+}
+
+function expectIntegerInRange(
+  value: unknown,
+  field: string,
+  min: number,
+  max: number
+): number {
+  if (
+    !Number.isInteger(value) ||
+    typeof value !== "number" ||
+    value < min ||
+    value > max
+  ) {
+    throw new Error(`Expected ${field} to be an integer between ${min} and ${max}`);
+  }
+
+  return value;
+}
+
+function expectUnknownArray(value: unknown, field: string): unknown[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`Expected ${field} to be an array`);
   }
 
   return value;

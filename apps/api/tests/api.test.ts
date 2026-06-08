@@ -7,6 +7,7 @@ import {
   type AnalysisRequest,
   type ChainStateProvider,
   type ChainStateSnapshot,
+  type ReportExplainer,
   type SecurityReport
 } from "@agent-warden/core";
 import { createApiServer } from "../src/server.js";
@@ -353,6 +354,62 @@ describe("AgentWarden API", () => {
     assert.equal(body.actionType, "login_signature");
   });
 
+  it("explains a completed report with the safe fallback explainer", async () => {
+    const report = sampleSecurityReport();
+    const response = await postJson(`${baseUrl}/explain-report`, { report });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.verdict, report.verdict);
+    assert.equal(body.riskScore, report.riskScore);
+    assert.equal(body.reportHash, report.reportHash);
+    assert.equal(body.model, "safe-fallback");
+    assert.match(body.explanation, /Deterministic policy engine returned ALLOW/);
+    assert.match(body.safetyNotice, /non-authoritative/);
+  });
+
+  it("falls back to the safe explainer when the primary explainer fails", async () => {
+    const app = await createApiServer(testEnv(), {
+      reportExplainer: new FailingExplainer()
+    });
+    const isolatedServer = app.listen(0);
+    await onceListening(isolatedServer);
+    const address = isolatedServer.address();
+
+    if (!address || typeof address === "string") {
+      throw new Error("Expected HTTP server address");
+    }
+
+    try {
+      const report = sampleSecurityReport();
+      const response = await postJson(`http://127.0.0.1:${address.port}/explain-report`, {
+        report
+      });
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.verdict, report.verdict);
+      assert.equal(body.riskScore, report.riskScore);
+      assert.equal(body.reportHash, report.reportHash);
+      assert.equal(body.model, "safe-fallback");
+    } finally {
+      await closeServer(isolatedServer);
+    }
+  });
+
+  it("returns 400 for malformed explain-report requests", async () => {
+    const response = await postJson(`${baseUrl}/explain-report`, {
+      report: {
+        verdict: "ALLOW"
+      }
+    });
+    const body = (await response.json()) as { error: string; message: string };
+
+    assert.equal(response.status, 400);
+    assert.equal(body.error, "Bad request");
+    assert.match(body.message, /report.riskScore/);
+  });
+
   it("returns 400 for malformed analysis requests", async () => {
     const response = await postJson(`${baseUrl}/analyze`, {
       intent: {
@@ -376,8 +433,17 @@ function testEnv(): ApiEnv {
     x402Network: "eip155:84532",
     x402Price: "$0.001",
     x402FacilitatorUrl: "https://x402.org/facilitator",
-    analysisRpcTimeoutMs: 3_000
+    analysisRpcTimeoutMs: 3_000,
+    groqModel: "llama-3.1-8b-instant"
   };
+}
+
+class FailingExplainer implements ReportExplainer {
+  readonly modelName = "failing-test-model";
+
+  async explain(_report: SecurityReport): Promise<string> {
+    throw new Error("forced explainer failure");
+  }
 }
 
 class StaticChainStateProvider implements ChainStateProvider {
@@ -447,4 +513,67 @@ function encodeAddress(address: string): string {
 
 function encodeUint256(value: bigint): string {
   return value.toString(16).padStart(64, "0");
+}
+
+function sampleSecurityReport(): SecurityReport {
+  return {
+    verdict: "ALLOW",
+    riskScore: 5,
+    riskVector: {
+      contractRisk: 5,
+      tokenRisk: 0,
+      behaviorRisk: 0,
+      intentDelta: 0,
+      sanctionsRisk: 0,
+      simulationRisk: 0
+    },
+    summary: "ALLOW: erc20 transfer classified as low risk.",
+    explanation: "Static analyzer explanation.",
+    findings: [],
+    recommendedAction:
+      "Proceed only if the signer recognizes the recipient, asset, amount, and target contract.",
+    transactionEnvelope: {
+      type: "legacy",
+      chainId: 5042002,
+      hasAccessList: false,
+      hasAuthorizationList: false,
+      hasBlobFields: false
+    },
+    actionType: "erc20_transfer",
+    executionGraph: {
+      rootNodeId: "root",
+      nodes: [
+        {
+          id: "root",
+          depth: 0,
+          kind: "root",
+          actionType: "erc20_transfer",
+          functionName: "erc20.transfer",
+          selector: "0xa9059cbb",
+          evidence: [],
+          warnings: []
+        }
+      ],
+      edges: [],
+      maxDepth: 0,
+      hasNestedExecution: false,
+      hasUnknownNode: false
+    },
+    decodedActions: [],
+    assetDeltas: [],
+    approvalFindings: [],
+    decodedTransaction: {
+      selector: "0xa9059cbb",
+      functionName: "erc20.transfer",
+      warnings: []
+    },
+    policyViolations: [],
+    simulationResult: {
+      status: "not_run",
+      engine: "local-static",
+      summary: "Simulation disabled.",
+      balanceDeltas: []
+    },
+    reportHash: "0x1111111111111111111111111111111111111111111111111111111111111111"
+  };
 }

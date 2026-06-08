@@ -3,16 +3,22 @@ import {
   analyzeSignature,
   analyzeTransactionWithSimulation,
   EthersChainStateProvider,
+  explainReport,
+  GroqExplainer,
   InMemorySessionStore,
   LocalReputationProvider,
   policyViolationsFromReputationSignals,
   evaluateStatePolicies,
-  validateAnalysisRequest
+  SafeExplainer,
+  validateAnalysisRequest,
+  validateExplainReportRequest
 } from "@agent-warden/core";
 import type {
   AnalysisRequest,
   ChainStateProvider,
+  ExplainReportResponse,
   PolicyViolation,
+  ReportExplainer,
   ReputationProvider,
   SecurityReport,
   SignatureAnalysisRequest,
@@ -24,17 +30,24 @@ import type { ApiEnv } from "../config/env.js";
 export interface AnalysisService {
   analyzeRequest(request: unknown): Promise<SecurityReport>;
   analyzeSignatureRequest(request: unknown): SignatureSecurityReport;
+  explainReportRequest(request: unknown): Promise<ExplainReportResponse>;
 }
 
 export interface AnalysisServiceOptions {
   sessionStore?: InMemorySessionStore;
   reputationProvider?: ReputationProvider;
   chainStateProvider?: ChainStateProvider;
+  reportExplainer?: ReportExplainer;
+  fallbackReportExplainer?: ReportExplainer;
 }
 
 export function createAnalysisService(
-  env: Pick<ApiEnv, "analysisRpcUrl" | "analysisRpcTimeoutMs"> = {
-    analysisRpcTimeoutMs: 3_000
+  env: Pick<
+    ApiEnv,
+    "analysisRpcUrl" | "analysisRpcTimeoutMs" | "groqApiKey" | "groqModel"
+  > = {
+    analysisRpcTimeoutMs: 3_000,
+    groqModel: "llama-3.1-8b-instant"
   },
   options: AnalysisServiceOptions = {}
 ): AnalysisService {
@@ -42,6 +55,8 @@ export function createAnalysisService(
   const reputationProvider = options.reputationProvider ?? new LocalReputationProvider();
   const chainStateProvider =
     options.chainStateProvider ?? createDefaultChainStateProvider(env);
+  const reportExplainer = options.reportExplainer ?? createDefaultReportExplainer(env);
+  const fallbackReportExplainer = options.fallbackReportExplainer ?? new SafeExplainer();
 
   return {
     async analyzeRequest(request: unknown): Promise<SecurityReport> {
@@ -82,6 +97,16 @@ export function createAnalysisService(
 
       sessionStore.recordSignature(signatureRequest.intent.from, report);
       return report;
+    },
+
+    async explainReportRequest(request: unknown): Promise<ExplainReportResponse> {
+      const explainRequest = validateExplainReportRequest(request);
+
+      return explainReport(
+        explainRequest.report,
+        reportExplainer,
+        fallbackReportExplainer
+      );
     }
   };
 }
@@ -96,6 +121,19 @@ export function createDefaultChainStateProvider(
   return new EthersChainStateProvider({
     rpcUrl: env.analysisRpcUrl,
     timeoutMs: env.analysisRpcTimeoutMs
+  });
+}
+
+export function createDefaultReportExplainer(
+  env: Pick<ApiEnv, "groqApiKey" | "groqModel">
+): ReportExplainer {
+  if (!env.groqApiKey) {
+    return new SafeExplainer();
+  }
+
+  return new GroqExplainer({
+    apiKey: env.groqApiKey,
+    model: env.groqModel
   });
 }
 

@@ -32,6 +32,12 @@ import {
   getPolicyToolInputSchema,
   getPolicyToolName
 } from "./tools/get-policy.tool.js";
+import {
+  executeExplainReportTool,
+  explainReportToolDescription,
+  explainReportToolInputSchema,
+  explainReportToolName
+} from "./tools/explain-report.tool.js";
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
@@ -71,6 +77,15 @@ export function createMcpServer(): McpServer {
     async (input) =>
       executeCheckAddressTool(input as Parameters<typeof executeCheckAddressTool>[0])
   );
+  server.tool(
+    explainReportToolName,
+    explainReportToolDescription,
+    explainReportToolInputSchema,
+    async (input) =>
+      executeExplainReportTool(
+        input as unknown as Parameters<typeof executeExplainReportTool>[0]
+      )
+  );
 
   return server;
 }
@@ -101,6 +116,10 @@ if (process.argv.includes("--describe")) {
           {
             name: checkAddressToolName,
             description: checkAddressToolDescription
+          },
+          {
+            name: explainReportToolName,
+            description: explainReportToolDescription
           }
         ]
       },

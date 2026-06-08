@@ -100,3 +100,27 @@ Analyzes an off-chain signature request such as EIP-712 typed data,
 
 Returns a `SignatureSecurityReport` with verdict, risk score, decoded signature,
 policy violations, safer alternative, and report hash.
+
+## `POST /explain-report`
+
+Explains an existing transaction `SecurityReport`. The explanation is
+non-authoritative and cannot change the deterministic verdict, risk score, or
+report hash.
+
+### Request
+
+```json
+{
+  "report": {
+    "verdict": "BLOCK",
+    "riskScore": 95,
+    "reportHash": "0x..."
+  }
+}
+```
+
+### Response
+
+Returns `verdict`, `riskScore`, `reportHash`, `model`, `explanation`, and a
+`safetyNotice`. If `GROQ_API_KEY` is unset or the Groq call fails, AgentWarden
+returns a safe deterministic fallback explanation.

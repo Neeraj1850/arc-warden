@@ -14,6 +14,7 @@ export * from "./analyzer/approval-detector.js";
 export * from "./analyzer/intent-matcher.js";
 export * from "./analyzer/risk-scorer.js";
 export * from "./analyzer/report-narrative.js";
+export * from "./llm/explain-report.js";
 export * from "./llm/explainer.interface.js";
 export * from "./llm/safe-explainer.js";
 export * from "./llm/groq-explainer.js";

@@ -3,21 +3,30 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { SecurityReport } from "../types/report.types.js";
 import type { ReportExplainer } from "./explainer.interface.js";
 
+export interface GroqLikeModel {
+  invoke(messages: Array<HumanMessage | SystemMessage>): Promise<{ content: unknown }>;
+}
+
 export interface GroqExplainerOptions {
   apiKey?: string;
   model?: string;
   temperature?: number;
+  chatModel?: GroqLikeModel;
 }
 
 export class GroqExplainer implements ReportExplainer {
-  private readonly model: ChatGroq;
+  readonly modelName: string;
+  private readonly model: GroqLikeModel;
 
   constructor(options: GroqExplainerOptions = {}) {
-    this.model = new ChatGroq({
-      apiKey: options.apiKey ?? process.env.GROQ_API_KEY,
-      model: options.model ?? process.env.GROQ_MODEL ?? "llama-3.1-8b-instant",
-      temperature: options.temperature ?? 0
-    });
+    this.modelName = options.model ?? process.env.GROQ_MODEL ?? "llama-3.1-8b-instant";
+    this.model =
+      options.chatModel ??
+      new ChatGroq({
+        apiKey: options.apiKey ?? process.env.GROQ_API_KEY,
+        model: this.modelName,
+        temperature: options.temperature ?? 0
+      });
   }
 
   async explain(report: SecurityReport): Promise<string> {
@@ -27,6 +36,7 @@ export class GroqExplainer implements ReportExplainer {
           "You explain AgentWarden security reports for AI-agent transaction review.",
           "Never override the deterministic verdict.",
           "Do not tell the user to sign a BLOCK transaction.",
+          "Summarize top findings, why they matter, and the safest next action.",
           "Keep the explanation concise and operational."
         ].join(" ")
       ),
@@ -37,15 +47,18 @@ export class GroqExplainer implements ReportExplainer {
   }
 }
 
-function buildPromptReport(report: SecurityReport): unknown {
+export function buildPromptReport(report: SecurityReport): unknown {
   return {
     verdict: report.verdict,
     riskScore: report.riskScore,
     riskVector: report.riskVector,
     actionType: report.actionType,
     summary: report.summary,
+    findings: report.findings,
     policyViolations: report.policyViolations,
+    stateFindings: report.stateFindings,
     recommendedAction: report.recommendedAction,
+    saferAlternative: report.saferAlternative,
     simulation: {
       status: report.simulationResult.status,
       engine: report.simulationResult.engine,

@@ -8,6 +8,8 @@ export interface ApiEnv {
   x402FacilitatorUrl: string;
   analysisRpcUrl?: string;
   analysisRpcTimeoutMs: number;
+  groqApiKey?: string;
+  groqModel: string;
 }
 
 export function getEnv(): ApiEnv {
@@ -23,7 +25,9 @@ export function getEnv(): ApiEnv {
     x402FacilitatorUrl:
       process.env.X402_FACILITATOR_URL ?? "https://x402.org/facilitator",
     analysisRpcUrl: optionalEnv(process.env.ANALYSIS_RPC_URL),
-    analysisRpcTimeoutMs: Number(process.env.ANALYSIS_RPC_TIMEOUT_MS ?? 3_000)
+    analysisRpcTimeoutMs: Number(process.env.ANALYSIS_RPC_TIMEOUT_MS ?? 3_000),
+    groqApiKey: optionalEnv(process.env.GROQ_API_KEY),
+    groqModel: process.env.GROQ_MODEL ?? "llama-3.1-8b-instant"
   };
 }
 

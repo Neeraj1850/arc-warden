@@ -33,6 +33,9 @@ Provide a security checkpoint that spend-capable AI agents call before signing o
 ## Authority Model
 
 The deterministic policy engine decides the final verdict. LLMs may be added as explainers or reviewers, but their output cannot override deterministic policy.
+The `/explain-report` API and `explain_report` MCP tool accept completed
+transaction reports only, preserve verdict/risk/hash fields, and fall back to a
+deterministic safe explanation when Groq is unavailable.
 
 ## V1 Analyzer Coverage
 

@@ -1,6 +1,8 @@
 export type {
   AnalysisRequest as AnalysisInput,
   AnalysisRequest,
+  ExplainReportRequest,
+  ExplainReportResponse,
   SecurityReport as AnalysisResult,
   SecurityReport,
   SimulationResult,

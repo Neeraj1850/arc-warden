@@ -78,6 +78,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /explain-report:
+    post:
+      summary: Explain an existing transaction security report
+      description: Returns a non-authoritative explanation without changing deterministic report fields.
+      operationId: explainReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplainReportRequest"
+      responses:
+        "200":
+          description: Report explanation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplainReportResponse"
+        "400":
+          description: Malformed request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     Address:
@@ -115,6 +139,41 @@ components:
           $ref: "#/components/schemas/SignatureIntent"
         payload:
           $ref: "#/components/schemas/SignaturePayload"
+    ExplainReportRequest:
+      type: object
+      required:
+        - report
+      properties:
+        report:
+          $ref: "#/components/schemas/SecurityReport"
+    ExplainReportResponse:
+      type: object
+      required:
+        - verdict
+        - riskScore
+        - reportHash
+        - model
+        - explanation
+        - safetyNotice
+      properties:
+        verdict:
+          enum:
+            - ALLOW
+            - WARN
+            - BLOCK
+        riskScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        reportHash:
+          type: string
+          pattern: "^0x[a-f0-9]{64}$"
+        model:
+          type: string
+        explanation:
+          type: string
+        safetyNotice:
+          type: string
     SignatureIntent:
       type: object
       required:

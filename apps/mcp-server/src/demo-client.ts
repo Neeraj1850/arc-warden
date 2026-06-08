@@ -3,12 +3,14 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import type {
   AnalysisRequest,
   Address,
+  ExplainReportResponse,
   SecurityReport,
   Verdict
 } from "@agent-warden/types";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { analyzeTransactionToolName } from "./tools/analyze-transaction.tool.js";
+import { explainReportToolName } from "./tools/explain-report.tool.js";
 
 const CHAIN_ID = 11155111;
 const FROM = "0x1111111111111111111111111111111111111111" as Address;
@@ -50,6 +52,10 @@ try {
     throw new Error(`Missing MCP tool: ${analyzeTransactionToolName}`);
   }
 
+  if (!toolNames.includes(explainReportToolName)) {
+    throw new Error(`Missing MCP tool: ${explainReportToolName}`);
+  }
+
   await runScenario({
     label: "safe-transfer",
     expectedVerdict: "ALLOW",
@@ -82,11 +88,43 @@ async function runScenario(input: {
   console.log(`       recommendedAction=${report.recommendedAction}`);
   console.log(`       hash=${report.reportHash}`);
 
+  const explanation = await callExplainReport(report);
+  console.log(`       explanationModel=${explanation.model}`);
+  console.log(`       explanation=${explanation.explanation}`);
+
   if (!passed) {
     throw new Error(
       `${input.label} expected ${input.expectedVerdict} but received ${report.verdict}`
     );
   }
+}
+
+async function callExplainReport(report: SecurityReport): Promise<ExplainReportResponse> {
+  const result = await client.callTool({
+    name: explainReportToolName,
+    arguments: { report } as unknown as Record<string, unknown>
+  });
+
+  if (!("content" in result) || !Array.isArray(result.content)) {
+    throw new Error("MCP explain tool returned an unsupported result shape.");
+  }
+
+  const textContent = result.content.find(isTextContent);
+  if (!textContent) {
+    throw new Error("MCP explain tool did not return a text JSON response.");
+  }
+
+  const explanation = JSON.parse(textContent.text) as ExplainReportResponse;
+
+  if (
+    explanation.verdict !== report.verdict ||
+    explanation.riskScore !== report.riskScore ||
+    explanation.reportHash !== report.reportHash
+  ) {
+    throw new Error("MCP explain tool changed deterministic report fields.");
+  }
+
+  return explanation;
 }
 
 async function callAnalyzeTransaction(request: AnalysisRequest): Promise<SecurityReport> {

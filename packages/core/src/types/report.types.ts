@@ -69,3 +69,16 @@ export interface SecurityReport {
   saferAlternative?: string;
   reportHash: string;
 }
+
+export interface ExplainReportRequest {
+  report: SecurityReport;
+}
+
+export interface ExplainReportResponse {
+  verdict: Verdict;
+  riskScore: number;
+  reportHash: string;
+  model: string;
+  explanation: string;
+  safetyNotice: string;
+}

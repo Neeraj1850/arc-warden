@@ -95,3 +95,18 @@ export const analyzeSignatureInputSchema = {
   intent: signatureIntentSchema,
   payload: signaturePayloadSchema
 };
+
+export const explainReportInputSchema = {
+  report: z
+    .object({
+      verdict: z.enum(["ALLOW", "WARN", "BLOCK"]),
+      riskScore: z.number().int().min(0).max(100),
+      reportHash: z.string().regex(/^0x[a-f0-9]{64}$/),
+      summary: z.string(),
+      recommendedAction: z.string(),
+      findings: z.array(z.unknown()),
+      policyViolations: z.array(z.unknown()),
+      simulationResult: z.object({}).passthrough()
+    })
+    .passthrough()
+};

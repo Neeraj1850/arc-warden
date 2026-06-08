@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import type { ApiEnv } from "./config/env.js";
 import { createAnalyzeSignatureRouter } from "./routes/analyze-signature.route.js";
 import { createAnalyzeRouter } from "./routes/analyze.route.js";
+import { createExplainReportRouter } from "./routes/explain-report.route.js";
 import { createHealthRouter } from "./routes/health.route.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { installX402Middleware } from "./middleware/x402.middleware.js";
@@ -26,6 +27,7 @@ export async function createApiServer(
   app.use(createHealthRouter());
   app.use(createAnalyzeRouter(analysisService));
   app.use(createAnalyzeSignatureRouter(analysisService));
+  app.use(createExplainReportRouter(analysisService));
   app.use(errorMiddleware);
 
   return app;
