@@ -4,8 +4,9 @@ import { inferStaticBalanceDeltas } from "./balance-delta-analyzer.js";
 import { detectTransactionEnvelope } from "./envelope-detector.js";
 import { buildExecutionGraph } from "./execution-graph.js";
 import { buildReportNarrative } from "./report-narrative.js";
-import { buildRiskVector } from "./risk-scorer.js";
+import { buildRiskVector, decideVerdict, scoreRisk } from "./risk-scorer.js";
 import { evaluatePolicies } from "../policy/policy-engine.js";
+import type { PolicyViolation } from "../types/policy.types.js";
 import type {
   AnalysisRequest,
   SecurityReport,
@@ -60,6 +61,54 @@ export async function analyzeTransactionWithSimulation(
     decodedTransaction,
     await ethCallSimulation(normalizedRequest, rpcUrl, decodedTransaction)
   );
+}
+
+export function applyAdditionalPolicyViolations(
+  request: AnalysisRequest,
+  report: SecurityReport,
+  additionalViolations: PolicyViolation[]
+): SecurityReport {
+  if (additionalViolations.length === 0) {
+    return report;
+  }
+
+  const normalizedRequest = validateAnalysisRequest(request);
+  const policyViolations = dedupePolicyViolations([
+    ...report.policyViolations,
+    ...additionalViolations
+  ]);
+  const verdict = decideVerdict(policyViolations);
+  const riskScore = scoreRisk(report.decodedTransaction, policyViolations);
+  const narrative = buildReportNarrative({
+    verdict,
+    riskScore,
+    actionType: report.actionType,
+    policyViolations,
+    approvalFindings: report.approvalFindings,
+    simulationResult: report.simulationResult,
+    saferAlternative: report.saferAlternative
+  });
+  const { reportHash: _previousHash, ...canonicalReport } = {
+    ...report,
+    verdict,
+    riskScore,
+    riskVector: buildRiskVector(
+      report.decodedTransaction,
+      policyViolations,
+      report.simulationResult
+    ),
+    ...narrative,
+    policyViolations
+  };
+
+  return {
+    ...canonicalReport,
+    reportHash: hashObject({
+      intent: normalizedRequest.intent,
+      transaction: normalizedRequest.transaction,
+      report: canonicalReport
+    })
+  };
 }
 
 function buildSecurityReport(
@@ -128,6 +177,20 @@ function buildSecurityReport(
       report: reportWithoutHash
     })
   };
+}
+
+function dedupePolicyViolations(violations: PolicyViolation[]): PolicyViolation[] {
+  const seen = new Set<string>();
+
+  return violations.filter((violation) => {
+    const key = `${violation.code}:${violation.actual ?? ""}`;
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
 }
 
 function staticSimulation(

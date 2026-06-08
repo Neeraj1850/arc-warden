@@ -48,6 +48,10 @@ The V1 response also includes:
 - `benchmarkProfile`
 - `simulationResult.revertReason` when an RPC simulation fails
 
+The API also applies short-lived signer session checks and configured local
+address-intelligence findings before producing the final verdict and report
+hash.
+
 ## `POST /analyze-signature`
 
 Analyzes an off-chain signature request such as EIP-712 typed data,

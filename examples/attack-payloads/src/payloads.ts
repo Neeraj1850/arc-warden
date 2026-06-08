@@ -1,4 +1,8 @@
-import type { AnalysisRequest, Verdict } from "@agent-warden/core";
+import type {
+  AnalysisRequest,
+  SignatureAnalysisRequest,
+  Verdict
+} from "@agent-warden/core";
 
 type Address = `0x${string}`;
 
@@ -6,8 +10,9 @@ export interface DemoPayload {
   id: string;
   title: string;
   source: "AgentKit" | "GOAT" | "Eliza" | "Generic";
+  kind?: "transaction" | "signature";
   expectedVerdict: Verdict;
-  request: AnalysisRequest;
+  request: AnalysisRequest | SignatureAnalysisRequest;
 }
 
 const CHAIN_ID = 11155111;
@@ -254,6 +259,96 @@ export const demoPayloads: DemoPayload[] = [
         to: TOKEN,
         value: "0",
         data: `0xd505accf${"0".repeat(64 * 7)}` as `0x${string}`
+      }
+    }
+  },
+  {
+    id: "typed-data-permit-drain",
+    title: "EIP-712 permit typed-data drain",
+    source: "Generic",
+    kind: "signature",
+    expectedVerdict: "BLOCK",
+    request: {
+      requestId: "typed-data-permit-drain",
+      intent: {
+        action: "permit",
+        chainId: CHAIN_ID,
+        from: FROM,
+        verifyingContract: TOKEN,
+        spender: SPENDER,
+        maxAmount: MAX_UINT256.toString(),
+        description: "Generic benchmark: off-chain permit approval request."
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "TestToken",
+            chainId: CHAIN_ID,
+            verifyingContract: TOKEN
+          },
+          primaryType: "Permit",
+          message: {
+            owner: FROM,
+            spender: SPENDER,
+            value: MAX_UINT256.toString(),
+            deadline: "9999999999"
+          }
+        }
+      }
+    }
+  },
+  {
+    id: "typed-data-transfer-authorization",
+    title: "EIP-3009 transfer authorization",
+    source: "Generic",
+    kind: "signature",
+    expectedVerdict: "BLOCK",
+    request: {
+      requestId: "typed-data-transfer-authorization",
+      intent: {
+        action: "authorization",
+        chainId: CHAIN_ID,
+        from: FROM,
+        verifyingContract: TOKEN,
+        description: "Generic benchmark: transfer authorization typed data."
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "USDC",
+            chainId: CHAIN_ID,
+            verifyingContract: TOKEN
+          },
+          primaryType: "TransferWithAuthorization",
+          message: {
+            from: FROM,
+            to: SPENDER,
+            value: "1000000",
+            validBefore: "9999999999"
+          }
+        }
+      }
+    }
+  },
+  {
+    id: "blind-eth-sign",
+    title: "Blind eth_sign request",
+    source: "Generic",
+    kind: "signature",
+    expectedVerdict: "BLOCK",
+    request: {
+      requestId: "blind-eth-sign",
+      intent: {
+        action: "unknown",
+        chainId: CHAIN_ID,
+        from: FROM,
+        description: "Generic benchmark: opaque eth_sign payload."
+      },
+      payload: {
+        kind: "eth_sign",
+        message: "0xdeadbeef"
       }
     }
   },

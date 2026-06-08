@@ -1,14 +1,19 @@
 import { Router } from "express";
 import type { SignatureSecurityReport } from "@agent-warden/types";
-import { analyzeSignatureRequest } from "../services/analysis.service.js";
+import {
+  defaultAnalysisService,
+  type AnalysisService
+} from "../services/analysis.service.js";
 import { jsonStringify, responseLocals } from "../server.js";
 
-export function createAnalyzeSignatureRouter(): Router {
+export function createAnalyzeSignatureRouter(
+  analysisService: AnalysisService = defaultAnalysisService
+): Router {
   const router = Router();
 
   router.post("/analyze-signature", (request, response, next) => {
     try {
-      const report = analyzeSignatureRequest(request.body);
+      const report = analysisService.analyzeSignatureRequest(request.body);
       logReport(responseLocals(request).requestId, report);
 
       response.status(200).type("application/json").send(jsonStringify(report));

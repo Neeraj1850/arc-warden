@@ -1,14 +1,19 @@
 ﻿import { Router } from "express";
 import type { SecurityReport } from "@agent-warden/types";
-import { analyzeRequest } from "../services/analysis.service.js";
+import {
+  defaultAnalysisService,
+  type AnalysisService
+} from "../services/analysis.service.js";
 import { jsonStringify, responseLocals } from "../server.js";
 
-export function createAnalyzeRouter(): Router {
+export function createAnalyzeRouter(
+  analysisService: AnalysisService = defaultAnalysisService
+): Router {
   const router = Router();
 
   router.post("/analyze", async (request, response, next) => {
     try {
-      const report = await analyzeRequest(request.body);
+      const report = await analysisService.analyzeRequest(request.body);
       logReport(responseLocals(request).requestId, report);
 
       response.status(200).type("application/json").send(jsonStringify(report));

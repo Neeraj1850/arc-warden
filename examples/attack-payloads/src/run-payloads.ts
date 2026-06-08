@@ -1,6 +1,8 @@
 import {
+  analyzeSignature,
   analyzeTransaction,
   type SecurityReport,
+  type SignatureSecurityReport,
   type Verdict
 } from "@agent-warden/core";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -24,9 +26,7 @@ const results: PayloadRunResult[] = [];
 
 for (const payload of demoPayloads) {
   const report =
-    mode === "api"
-      ? await analyzeViaApi(apiUrl, payload)
-      : analyzeTransaction(payload.request);
+    mode === "api" ? await analyzeViaApi(apiUrl, payload) : analyzeLocal(payload);
   const passed = report.verdict === payload.expectedVerdict;
 
   if (!passed) {
@@ -49,8 +49,16 @@ if (failures > 0) {
   process.exitCode = 1;
 }
 
-async function analyzeViaApi(url: string, payload: DemoPayload): Promise<SecurityReport> {
-  const response = await fetch(url, {
+function analyzeLocal(payload: DemoPayload): DemoReport {
+  return payload.kind === "signature"
+    ? analyzeSignature(payload.request as Parameters<typeof analyzeSignature>[0])
+    : analyzeTransaction(payload.request as Parameters<typeof analyzeTransaction>[0]);
+}
+
+async function analyzeViaApi(url: string, payload: DemoPayload): Promise<DemoReport> {
+  const targetUrl =
+    payload.kind === "signature" ? url.replace(/\/analyze$/, "/analyze-signature") : url;
+  const response = await fetch(targetUrl, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -67,19 +75,15 @@ async function analyzeViaApi(url: string, payload: DemoPayload): Promise<Securit
     );
   }
 
-  return JSON.parse(responseText) as SecurityReport;
+  return JSON.parse(responseText) as DemoReport;
 }
 
-function printResult(
-  payload: DemoPayload,
-  report: SecurityReport,
-  passed: boolean
-): void {
+function printResult(payload: DemoPayload, report: DemoReport, passed: boolean): void {
   const status = passed ? "PASS" : "FAIL";
   const violations = report.policyViolations.map((violation) => violation.code).join(",");
 
   console.log(
-    `[${status}] ${payload.id} source=${payload.source} expected=${payload.expectedVerdict} actual=${report.verdict} risk=${report.riskScore} action=${report.actionType}`
+    `[${status}] ${payload.id} source=${payload.source} kind=${payload.kind ?? "transaction"} expected=${payload.expectedVerdict} actual=${report.verdict} risk=${report.riskScore} action=${report.actionType}`
   );
 
   if (violations) {
@@ -94,9 +98,11 @@ function printResult(
 
 interface PayloadRunResult {
   payload: DemoPayload;
-  report: SecurityReport;
+  report: DemoReport;
   passed: boolean;
 }
+
+type DemoReport = SecurityReport | SignatureSecurityReport;
 
 function writeArtifacts(results: PayloadRunResult[], runMode: string): void {
   mkdirSync(resultsDir, { recursive: true });
@@ -139,7 +145,7 @@ function renderMarkdownReport(artifact: {
     source: string;
     expectedVerdict: Verdict;
     passed: boolean;
-    report: SecurityReport;
+    report: DemoReport;
   }>;
 }): string {
   const lines = [
@@ -178,17 +184,18 @@ function renderMarkdownReport(artifact: {
       `Action: ${result.report.actionType}`,
       `Report hash: \`${result.report.reportHash}\``,
       "",
-      `Summary: ${result.report.summary}`,
+      `Summary: ${reportSummary(result.report)}`,
       "",
-      result.report.explanation,
+      reportExplanation(result.report),
       "",
       "Findings:"
     );
 
-    if (result.report.findings.length === 0) {
+    const findings = reportFindings(result.report);
+    if (findings.length === 0) {
       lines.push("- None");
     } else {
-      for (const finding of result.report.findings) {
+      for (const finding of findings) {
         const evidence = finding.evidence.length
           ? ` Evidence: ${finding.evidence.join(", ")}.`
           : "";
@@ -198,10 +205,59 @@ function renderMarkdownReport(artifact: {
       }
     }
 
-    lines.push("", `Recommended action: ${result.report.recommendedAction}`, "");
+    lines.push("", `Recommended action: ${reportRecommendedAction(result.report)}`, "");
   }
 
   return `${lines.join("\n")}\n`;
+}
+
+function isSecurityReport(report: DemoReport): report is SecurityReport {
+  return "summary" in report;
+}
+
+function reportSummary(report: DemoReport): string {
+  return isSecurityReport(report)
+    ? report.summary
+    : `${report.verdict}: ${report.actionType} classified as risk ${report.riskScore}.`;
+}
+
+function reportExplanation(report: DemoReport): string {
+  if (isSecurityReport(report)) {
+    return report.explanation;
+  }
+
+  if (report.policyViolations.length === 0) {
+    return "AgentWarden found no deterministic signature policy violations.";
+  }
+
+  return `AgentWarden found ${report.policyViolations.length} signature issue(s). Primary finding: ${report.policyViolations[0]?.message}`;
+}
+
+function reportFindings(report: DemoReport): Array<{
+  severity: string;
+  code: string;
+  detail: string;
+  evidence: string[];
+}> {
+  if (isSecurityReport(report)) {
+    return report.findings;
+  }
+
+  return report.policyViolations.map((violation) => ({
+    severity: violation.severity,
+    code: violation.code,
+    detail: violation.message,
+    evidence: [violation.expected, violation.actual].filter(
+      (value): value is string => value !== undefined
+    )
+  }));
+}
+
+function reportRecommendedAction(report: DemoReport): string {
+  return isSecurityReport(report)
+    ? report.recommendedAction
+    : (report.saferAlternative ??
+        "Proceed only if the signature intent is explicit and bounded.");
 }
 
 function escapeCell(value: string): string {

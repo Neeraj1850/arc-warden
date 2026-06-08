@@ -46,5 +46,18 @@ AgentWarden V1 analyzes the agent-common EVM transaction surface:
 - execution graph construction for root actions and detected nested actions
 - EIP-7702 authorization-list detection
 - core-only signature analysis for EIP-712 permit, Permit2-like typed data, `personal_sign`, and blind `eth_sign`
+- short-lived signer session memory for approval or permit follow-up sequences
+- deterministic local address registries for known routers, known tokens, and risky targets
 
 Set `ANALYSIS_RPC_URL` to enable optional free RPC `eth_call` success/failure simulation.
+
+## State-Aware Analysis
+
+The API owns an in-memory session store with a 10-minute default TTL. Recent
+approvals, Permit signatures, operator approvals, and unknown selectors are
+recorded by signer. A later transaction targeting the same contract is blocked
+when it follows a recent approval event.
+
+Local address intelligence contributes policy findings but cannot weaken an
+existing deterministic block. The default registry is empty and can be replaced
+through the analysis service boundary without changing the analyzer.

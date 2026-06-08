@@ -10,6 +10,8 @@ export type SignatureKind =
 export type SignatureActionType =
   | "permit_signature"
   | "permit2_signature"
+  | "transfer_authorization_signature"
+  | "safe_transaction_signature"
   | "login_signature"
   | "authorization_signature"
   | "unknown_signature";
@@ -57,6 +59,7 @@ export interface DecodedSignature {
   owner?: Address;
   spender?: Address;
   value?: string;
+  to?: Address;
   deadline?: string;
   warnings: string[];
 }

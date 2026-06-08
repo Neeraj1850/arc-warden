@@ -2,7 +2,7 @@
 
 Generated: deterministic-local-run
 Mode: local
-Total: 15
+Total: 18
 Failures: 0
 
 | Payload | Source | Expected | Actual | Risk | Action | Result |
@@ -17,6 +17,9 @@ Failures: 0
 | multicall-decoded-unknown-selector | Generic | BLOCK | BLOCK | 100 | multicall | PASS |
 | eip7702-authorization-list | Generic | BLOCK | BLOCK | 85 | erc20_transfer | PASS |
 | permit-signature-approval | Generic | BLOCK | BLOCK | 100 | permit_signature | PASS |
+| typed-data-permit-drain | Generic | BLOCK | BLOCK | 100 | permit_signature | PASS |
+| typed-data-transfer-authorization | Generic | BLOCK | BLOCK | 100 | transfer_authorization_signature | PASS |
+| blind-eth-sign | Generic | BLOCK | BLOCK | 100 | unknown_signature | PASS |
 | eip4337-hidden-approval | Generic | BLOCK | BLOCK | 85 | account_abstraction | PASS |
 | native-value-hidden-in-contract-call | AgentKit | BLOCK | BLOCK | 50 | erc20_transfer | PASS |
 | unknown-selector | Generic | BLOCK | BLOCK | 80 | unknown_contract_call | PASS |
@@ -209,6 +212,61 @@ Findings:
 - CRITICAL PERMIT_SIGNATURE_APPROVAL: Permit-style approval detected. Off-chain token spending signatures must not be treated as ordinary transaction calldata. Evidence: expected=no permit or Permit2 approval unless explicitly reviewed, actual=erc20.permit.
 
 Recommended action: Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.
+
+## EIP-712 permit typed-data drain
+
+Payload: `typed-data-permit-drain`
+Source: Generic
+Verdict: BLOCK
+Risk score: 100
+Action: permit_signature
+Report hash: `0x01dc304bcc72f44d1a3f4d7bb1e955aa6760fc0b3a926f52d39cbf329b13e300`
+
+Summary: BLOCK: permit_signature classified as risk 100.
+
+AgentWarden found 2 signature issue(s). Primary finding: Permit-style typed data can authorize token spending without an onchain approval transaction.
+
+Findings:
+- CRITICAL PERMIT_TYPED_DATA_SIGNATURE: Permit-style typed data can authorize token spending without an onchain approval transaction. Evidence: bounded, explicit permit review, Permit.
+- CRITICAL UNLIMITED_SIGNATURE_ALLOWANCE: Signature authorizes an unlimited token allowance. Evidence: bounded allowance, 115792089237316195423570985008687907853269984665640564039457584007913129639935.
+
+Recommended action: Do not sign permit typed data unless spender, token, amount, nonce, deadline, and verifying contract are independently bounded.
+
+## EIP-3009 transfer authorization
+
+Payload: `typed-data-transfer-authorization`
+Source: Generic
+Verdict: BLOCK
+Risk score: 100
+Action: transfer_authorization_signature
+Report hash: `0x12c768dd1c16eb62efbcf6a87e523cbba09e9a1f3638661d9f1d8beb9f7d09ae`
+
+Summary: BLOCK: transfer_authorization_signature classified as risk 100.
+
+AgentWarden found 1 signature issue(s). Primary finding: Transfer authorization typed data can authorize token movement without a normal transaction prepared by the agent.
+
+Findings:
+- CRITICAL TRANSFER_AUTHORIZATION_SIGNATURE: Transfer authorization typed data can authorize token movement without a normal transaction prepared by the agent. Evidence: explicit transfer authorization review, TransferWithAuthorization.
+
+Recommended action: Decode the typed-data execution target and require explicit bounded intent before signing.
+
+## Blind eth_sign request
+
+Payload: `blind-eth-sign`
+Source: Generic
+Verdict: BLOCK
+Risk score: 100
+Action: unknown_signature
+Report hash: `0x43bb5a7ba09b4d2f1ee509607f3fef33e1c1a00d5dd7cb29eefa464c87a6623f`
+
+Summary: BLOCK: unknown_signature classified as risk 100.
+
+AgentWarden found 1 signature issue(s). Primary finding: eth_sign payloads are opaque and must not be approved automatically.
+
+Findings:
+- CRITICAL BLIND_ETH_SIGN: eth_sign payloads are opaque and must not be approved automatically.
+
+Recommended action: Reject blind eth_sign requests and require structured EIP-712 typed data with an explicit intent.
 
 ## EIP-4337 bundle containing approval selector
 

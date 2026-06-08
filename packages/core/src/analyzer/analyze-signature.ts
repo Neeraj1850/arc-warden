@@ -12,6 +12,11 @@ import { areAddressesEqual, isAddress, normalizeAddress } from "../utils/validat
 
 const MAX_UINT256 = (1n << 256n) - 1n;
 const PERMIT_PRIMARY_TYPES = new Set(["Permit", "PermitSingle", "PermitBatch"]);
+const TRANSFER_AUTHORIZATION_TYPES = new Set([
+  "TransferWithAuthorization",
+  "ReceiveWithAuthorization"
+]);
+const SAFE_TRANSACTION_TYPES = new Set(["SafeTx", "SafeTransaction"]);
 
 export function analyzeSignature(
   request: SignatureAnalysisRequest
@@ -134,6 +139,49 @@ function decodeTypedData(typedData: Eip712TypedData): DecodedSignature {
     };
   }
 
+  if (TRANSFER_AUTHORIZATION_TYPES.has(primaryType)) {
+    return {
+      kind: "eip712_typed_data",
+      actionType: "transfer_authorization_signature",
+      primaryType,
+      domainName: typedData.domain?.name,
+      chainId: domainChainId,
+      verifyingContract,
+      owner: readAddress(message, ["from", "owner"]),
+      to: readAddress(message, ["to", "recipient"]),
+      value: readDecimal(message, ["value", "amount"]),
+      deadline: readDecimal(message, ["validBefore", "deadline"]),
+      warnings: ["Transfer authorization typed data can move funds off-chain."]
+    };
+  }
+
+  if (SAFE_TRANSACTION_TYPES.has(primaryType)) {
+    return {
+      kind: "eip712_typed_data",
+      actionType: "safe_transaction_signature",
+      primaryType,
+      domainName: typedData.domain?.name,
+      chainId: domainChainId,
+      verifyingContract,
+      to: readAddress(message, ["to"]),
+      value: readDecimal(message, ["value"]),
+      warnings: ["Safe transaction typed data can authorize smart account execution."]
+    };
+  }
+
+  if (primaryType.toLowerCase().includes("authorization")) {
+    return {
+      kind: "eip712_typed_data",
+      actionType: "authorization_signature",
+      primaryType,
+      domainName: typedData.domain?.name,
+      chainId: domainChainId,
+      verifyingContract,
+      owner: readAddress(message, ["authority", "owner", "from"]),
+      warnings: ["Authorization typed data can delegate account or token authority."]
+    };
+  }
+
   if (
     primaryType.toLowerCase().includes("login") ||
     primaryType.toLowerCase().includes("authentication")
@@ -246,6 +294,38 @@ function evaluateSignaturePolicies(
     });
   }
 
+  if (decoded.actionType === "transfer_authorization_signature") {
+    violations.push({
+      code: "TRANSFER_AUTHORIZATION_SIGNATURE",
+      severity: "critical",
+      message:
+        "Transfer authorization typed data can authorize token movement without a normal transaction prepared by the agent.",
+      expected: "explicit transfer authorization review",
+      actual: decoded.primaryType
+    });
+  }
+
+  if (decoded.actionType === "safe_transaction_signature") {
+    violations.push({
+      code: "SAFE_TRANSACTION_SIGNATURE",
+      severity: "high",
+      message:
+        "Safe transaction typed data can authorize smart account execution and requires transaction-level decoding.",
+      expected: "decoded Safe transaction execution payload",
+      actual: decoded.primaryType
+    });
+  }
+
+  if (decoded.actionType === "authorization_signature") {
+    violations.push({
+      code: "AUTHORIZATION_SIGNATURE_REQUIRES_REVIEW",
+      severity: "critical",
+      message: "Authorization typed data can delegate authority and requires review.",
+      expected: "no authority delegation unless explicitly modeled",
+      actual: decoded.primaryType
+    });
+  }
+
   if (decoded.value && BigInt(decoded.value) === MAX_UINT256) {
     violations.push({
       code: "UNLIMITED_SIGNATURE_ALLOWANCE",
@@ -309,6 +389,18 @@ function saferAlternative(violations: PolicyViolation[]): string | undefined {
     )
   ) {
     return "Do not sign permit typed data unless spender, token, amount, nonce, deadline, and verifying contract are independently bounded.";
+  }
+
+  if (
+    violations.some((violation) =>
+      [
+        "TRANSFER_AUTHORIZATION_SIGNATURE",
+        "SAFE_TRANSACTION_SIGNATURE",
+        "AUTHORIZATION_SIGNATURE_REQUIRES_REVIEW"
+      ].includes(violation.code)
+    )
+  ) {
+    return "Decode the typed-data execution target and require explicit bounded intent before signing.";
   }
 
   if (violations.some((violation) => violation.code === "BLIND_ETH_SIGN")) {

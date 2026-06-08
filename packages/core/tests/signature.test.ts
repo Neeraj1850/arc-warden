@@ -69,6 +69,139 @@ describe("analyzeSignature", () => {
     assert.equal(report.decodedSignature.value, "1000");
   });
 
+  it("blocks Permit2 batch typed data", () => {
+    const report = analyzeSignature({
+      requestId: "permit2-batch",
+      intent: {
+        action: "permit",
+        chainId: CHAIN_ID,
+        from: FROM,
+        verifyingContract: TOKEN,
+        spender: SPENDER
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "Permit2",
+            chainId: CHAIN_ID,
+            verifyingContract: TOKEN
+          },
+          primaryType: "PermitBatch",
+          message: {
+            owner: FROM,
+            spender: SPENDER,
+            permitted: {
+              amount: "1000"
+            },
+            sigDeadline: "9999999999"
+          }
+        }
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "permit2_signature");
+  });
+
+  it("blocks EIP-3009 transfer authorization typed data", () => {
+    const report = analyzeSignature({
+      requestId: "transfer-auth",
+      intent: {
+        action: "authorization",
+        chainId: CHAIN_ID,
+        from: FROM,
+        verifyingContract: TOKEN
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "USDC",
+            chainId: CHAIN_ID,
+            verifyingContract: TOKEN
+          },
+          primaryType: "TransferWithAuthorization",
+          message: {
+            from: FROM,
+            to: SPENDER,
+            value: "1000",
+            validBefore: "9999999999"
+          }
+        }
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "transfer_authorization_signature");
+    assert.equal(report.decodedSignature.to, SPENDER);
+  });
+
+  it("blocks Safe transaction typed data until execution payload is decoded", () => {
+    const report = analyzeSignature({
+      requestId: "safe-tx",
+      intent: {
+        action: "authorization",
+        chainId: CHAIN_ID,
+        from: FROM,
+        verifyingContract: TOKEN
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "Safe",
+            chainId: CHAIN_ID,
+            verifyingContract: TOKEN
+          },
+          primaryType: "SafeTx",
+          message: {
+            to: SPENDER,
+            value: "0",
+            data: "0xdeadbeef"
+          }
+        }
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "safe_transaction_signature");
+    assert.ok(
+      report.policyViolations.some(
+        (violation) => violation.code === "SAFE_TRANSACTION_SIGNATURE"
+      )
+    );
+  });
+
+  it("blocks EIP-7702-style authorization typed data", () => {
+    const report = analyzeSignature({
+      requestId: "authorization",
+      intent: {
+        action: "authorization",
+        chainId: CHAIN_ID,
+        from: FROM
+      },
+      payload: {
+        kind: "eip712_typed_data",
+        typedData: {
+          domain: {
+            name: "EIP7702",
+            chainId: CHAIN_ID
+          },
+          primaryType: "Authorization",
+          message: {
+            authority: FROM,
+            address: SPENDER,
+            nonce: "1"
+          }
+        }
+      }
+    });
+
+    assert.equal(report.verdict, "BLOCK");
+    assert.equal(report.actionType, "authorization_signature");
+  });
+
   it("blocks blind eth_sign payloads", () => {
     const report = analyzeSignature({
       requestId: "blind-sign",

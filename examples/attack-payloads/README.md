@@ -12,6 +12,7 @@ It demonstrates common agent signing risks:
 - decoded multicall with safe, approval, and unknown child calls
 - EIP-7702 authorization-list transaction
 - EIP-2612/Permit2-style approval bypass
+- EIP-712 permit, EIP-3009 transfer authorization, and blind `eth_sign`
 - EIP-4337 account abstraction bundle
 - native value hidden in a contract call
 - unknown selector

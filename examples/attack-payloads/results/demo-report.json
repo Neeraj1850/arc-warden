@@ -1,7 +1,7 @@
 {
   "generatedAt": "deterministic-local-run",
   "mode": "local",
-  "total": 15,
+  "total": 18,
   "failures": 0,
   "results": [
     {
@@ -1841,6 +1841,189 @@
         },
         "saferAlternative": "Do not sign permit or Permit2 approvals until the spender, token, amount, deadline, and nonce are independently decoded and bounded.",
         "reportHash": "0xeb44a9ae2b032b867843e14fa9cfaea374621bf863872554e5e4828559c9ec7b"
+      }
+    },
+    {
+      "id": "typed-data-permit-drain",
+      "title": "EIP-712 permit typed-data drain",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "typed-data-permit-drain",
+        "intent": {
+          "action": "permit",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "verifyingContract": "0x2222222222222222222222222222222222222222",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "maxAmount": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          "description": "Generic benchmark: off-chain permit approval request."
+        },
+        "payload": {
+          "kind": "eip712_typed_data",
+          "typedData": {
+            "domain": {
+              "name": "TestToken",
+              "chainId": 11155111,
+              "verifyingContract": "0x2222222222222222222222222222222222222222"
+            },
+            "primaryType": "Permit",
+            "message": {
+              "owner": "0x1111111111111111111111111111111111111111",
+              "spender": "0x5555555555555555555555555555555555555555",
+              "value": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+              "deadline": "9999999999"
+            }
+          }
+        }
+      },
+      "report": {
+        "requestId": "typed-data-permit-drain",
+        "verdict": "BLOCK",
+        "riskScore": 100,
+        "actionType": "permit_signature",
+        "decodedSignature": {
+          "kind": "eip712_typed_data",
+          "actionType": "permit_signature",
+          "primaryType": "Permit",
+          "domainName": "TestToken",
+          "chainId": 11155111,
+          "verifyingContract": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "spender": "0x5555555555555555555555555555555555555555",
+          "value": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          "deadline": "9999999999",
+          "warnings": [
+            "Permit-style typed data can authorize token spending off-chain."
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "PERMIT_TYPED_DATA_SIGNATURE",
+            "severity": "critical",
+            "message": "Permit-style typed data can authorize token spending without an onchain approval transaction.",
+            "expected": "bounded, explicit permit review",
+            "actual": "Permit"
+          },
+          {
+            "code": "UNLIMITED_SIGNATURE_ALLOWANCE",
+            "severity": "critical",
+            "message": "Signature authorizes an unlimited token allowance.",
+            "expected": "bounded allowance",
+            "actual": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+          }
+        ],
+        "saferAlternative": "Do not sign permit typed data unless spender, token, amount, nonce, deadline, and verifying contract are independently bounded.",
+        "reportHash": "0x01dc304bcc72f44d1a3f4d7bb1e955aa6760fc0b3a926f52d39cbf329b13e300"
+      }
+    },
+    {
+      "id": "typed-data-transfer-authorization",
+      "title": "EIP-3009 transfer authorization",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "typed-data-transfer-authorization",
+        "intent": {
+          "action": "authorization",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "verifyingContract": "0x2222222222222222222222222222222222222222",
+          "description": "Generic benchmark: transfer authorization typed data."
+        },
+        "payload": {
+          "kind": "eip712_typed_data",
+          "typedData": {
+            "domain": {
+              "name": "USDC",
+              "chainId": 11155111,
+              "verifyingContract": "0x2222222222222222222222222222222222222222"
+            },
+            "primaryType": "TransferWithAuthorization",
+            "message": {
+              "from": "0x1111111111111111111111111111111111111111",
+              "to": "0x5555555555555555555555555555555555555555",
+              "value": "1000000",
+              "validBefore": "9999999999"
+            }
+          }
+        }
+      },
+      "report": {
+        "requestId": "typed-data-transfer-authorization",
+        "verdict": "BLOCK",
+        "riskScore": 100,
+        "actionType": "transfer_authorization_signature",
+        "decodedSignature": {
+          "kind": "eip712_typed_data",
+          "actionType": "transfer_authorization_signature",
+          "primaryType": "TransferWithAuthorization",
+          "domainName": "USDC",
+          "chainId": 11155111,
+          "verifyingContract": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "to": "0x5555555555555555555555555555555555555555",
+          "value": "1000000",
+          "deadline": "9999999999",
+          "warnings": [
+            "Transfer authorization typed data can move funds off-chain."
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "TRANSFER_AUTHORIZATION_SIGNATURE",
+            "severity": "critical",
+            "message": "Transfer authorization typed data can authorize token movement without a normal transaction prepared by the agent.",
+            "expected": "explicit transfer authorization review",
+            "actual": "TransferWithAuthorization"
+          }
+        ],
+        "saferAlternative": "Decode the typed-data execution target and require explicit bounded intent before signing.",
+        "reportHash": "0x12c768dd1c16eb62efbcf6a87e523cbba09e9a1f3638661d9f1d8beb9f7d09ae"
+      }
+    },
+    {
+      "id": "blind-eth-sign",
+      "title": "Blind eth_sign request",
+      "source": "Generic",
+      "expectedVerdict": "BLOCK",
+      "passed": true,
+      "request": {
+        "requestId": "blind-eth-sign",
+        "intent": {
+          "action": "unknown",
+          "chainId": 11155111,
+          "from": "0x1111111111111111111111111111111111111111",
+          "description": "Generic benchmark: opaque eth_sign payload."
+        },
+        "payload": {
+          "kind": "eth_sign",
+          "message": "0xdeadbeef"
+        }
+      },
+      "report": {
+        "requestId": "blind-eth-sign",
+        "verdict": "BLOCK",
+        "riskScore": 100,
+        "actionType": "unknown_signature",
+        "decodedSignature": {
+          "kind": "eth_sign",
+          "actionType": "unknown_signature",
+          "warnings": [
+            "eth_sign is opaque blind-signing data."
+          ]
+        },
+        "policyViolations": [
+          {
+            "code": "BLIND_ETH_SIGN",
+            "severity": "critical",
+            "message": "eth_sign payloads are opaque and must not be approved automatically."
+          }
+        ],
+        "saferAlternative": "Reject blind eth_sign requests and require structured EIP-712 typed data with an explicit intent.",
+        "reportHash": "0x43bb5a7ba09b4d2f1ee509607f3fef33e1c1a00d5dd7cb29eefa464c87a6623f"
       }
     },
     {
