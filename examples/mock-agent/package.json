@@ -7,6 +7,8 @@
     "dev": "tsx src/index.ts",
     "safe": "tsx src/index.ts safe-transfer",
     "malicious": "tsx src/index.ts malicious-approval",
+    "arc:safe": "tsx src/index.ts arc-safe-transfer",
+    "arc:malicious": "tsx src/index.ts arc-malicious-approval",
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "tsx src/index.ts --dry-run",

@@ -54,3 +54,7 @@ X402_LIVE_TEST=true pnpm --filter @agent-warden/x402 test:live
 ```
 
 It requires a testnet EOA key, existing Gateway balance, a running Arc Gateway-protected API, and `X402_LIVE_FROM`, `X402_LIVE_TOKEN`, and `X402_LIVE_RECIPIENT`.
+
+## Fork-First Validation
+
+Run `pnpm demo:arc-fork` before funded Gateway testing. This uses mock x402 while preserving the Arc chain ID, Arc USDC contract, live fork state, and Anvil execution. Circle Gateway itself is not emulated locally; only the payment gate is mocked.

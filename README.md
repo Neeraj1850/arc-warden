@@ -159,6 +159,39 @@ pnpm --filter @agent-warden/mock-agent malicious
 
 This uses Ethereum Sepolia for the transaction being analyzed and a local mock payment retry. The same challenge and canonical request hash are used for preflight and delivery.
 
+## Local Arc Fork Flow
+
+The Arc fork demo proves the full analyzer path without wallets, faucets, Gateway deposits, or real payments:
+
+```bash
+pnpm demo:arc-fork
+```
+
+It starts an external Anvil process forked from Arc Testnet, verifies chain ID `5042002`, seeds a deterministic fixture wallet with fork-only native USDC, and runs:
+
+- a mock-x402 native Arc USDC payment that must return `ALLOW`
+- an unlimited Arc USDC approval that must return `BLOCK`
+- Ethers live state reads against the fork
+- Anvil execution with snapshot rollback
+
+The default fixture addresses are intentionally deterministic and local-only. No private key or faucet balance is used. Arc exposes native USDC with 18-decimal gas precision and a shared 6-decimal ERC-20 interface; the fixture verifies both views after seeding.
+
+The safe scenario uses native value because Anvil does not reproduce Arc's custom native-USDC ERC-20 `transfer` extension. Allowance calls such as `approve` remain executable on the fork, so the malicious approval scenario still exercises the ERC-20 security path.
+
+To manage Anvil separately:
+
+```bash
+anvil --fork-url https://rpc.testnet.arc.network --chain-id 5042002 --port 8545
+pnpm arc:fork:seed
+```
+
+Then start the API with `ANALYSIS_RPC_URL` and `ANVIL_RPC_URL` set to `http://127.0.0.1:8545`, and run:
+
+```bash
+pnpm --filter @agent-warden/mock-agent arc:safe
+pnpm --filter @agent-warden/mock-agent arc:malicious
+```
+
 ## Attack Payload Suite
 
 Run the analyzer demo suite locally without the API:

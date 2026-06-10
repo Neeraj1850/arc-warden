@@ -22,3 +22,5 @@ Use Arc Testnet for Circle Gateway Nanopayments now, and for separate report anc
 ## Demo Path
 
 The current demo path is an Arc Gateway-paid analysis that returns an unchanged deterministic report. Report anchoring remains a separate later transaction.
+
+Before funded testnet payment, `pnpm demo:arc-fork` runs the same transaction-security pipeline against an Anvil Arc Testnet fork with mock x402. The fixture sets a deterministic fork-only native USDC balance and verifies Arc's shared 18-decimal native and 6-decimal ERC-20 views; no private key, faucet, or live state mutation is required.
